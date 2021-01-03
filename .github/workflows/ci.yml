@@ -1,0 +1,13 @@
+name: CI
+
+on: [push, pull_request]
+
+jobs:
+  phpstan:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Analyze with PHPStan
+      uses: larryTheCoder/pmmp-phpstan-action@master
+      with:
+        phpstan-config: phpstan.neon.dist
