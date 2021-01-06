@@ -115,11 +115,11 @@ class CavePopulator implements Populator{
 		}
 	}
 
-	private function addRoom(int $seed, Chunk $chunk, int $refChunkX, int $refChunkZ, float $caveStartX, float $caveStartY, float $caveStartZ, array $liquidBlocks = [], array $carvingMask = []){
+	private function addRoom(int $seed, Chunk $chunk, int $refChunkX, int $refChunkZ, float $caveStartX, float $caveStartY, float $caveStartZ, array $liquidBlocks = [], array $carvingMask = []): void{
 		$this->addTunnel($seed, $chunk, $refChunkX, $refChunkZ, $caveStartX, $caveStartY, $caveStartZ, 1.0 + $this->random->nextFloat() * 6.0, 0.0, 0.0, -1, -1, 0.5, $liquidBlocks, $carvingMask);
 	}
 
-	private function addTunnel(int $seed, Chunk $chunk, int $refChunkX, int $refChunkZ, float $caveStartX, float $caveStartY, float $caveStartZ, float $width, float $yaw, float $pitch, int $startCounter, int $endCounter, float $heightModifier, array $liquidBlocks = [], array $carvingMask = []){
+	private function addTunnel(int $seed, Chunk $chunk, int $refChunkX, int $refChunkZ, float $caveStartX, float $caveStartY, float $caveStartZ, float $width, float $yaw, float $pitch, int $startCounter, int $endCounter, float $heightModifier, array $liquidBlocks = [], array $carvingMask = []): void{
 		$random = new CaveRandom($seed);
 
 		// Center block of the origin chunk
@@ -260,7 +260,7 @@ class CavePopulator implements Populator{
 		}
 	}
 
-	private function digBlock(Chunk $chunk, int $currX, int $currY, int $currZ, ?Vector3 $liquidBlock, int $caveLiquidAltitude){
+	private function digBlock(Chunk $chunk, int $currX, int $currY, int $currZ, ?Vector3 $liquidBlock, int $caveLiquidAltitude): void{
 		$block = BlockFactory::getInstance()->fromFullBlock($chunk->getFullBlock($currX, $currY, $currZ));
 		$blockAbove = BlockFactory::getInstance()->fromFullBlock($chunk->getFullBlock($currX, $currY + 1, $currZ));
 
