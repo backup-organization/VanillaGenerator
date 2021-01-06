@@ -40,9 +40,9 @@ class PerlinOctaveGenerator extends OctaveGenerator
 	 * @param int $sizeZ
 	 * @return PerlinOctaveGenerator
 	 */
-	public static function fromRandomAndOctaves(Random $random, int $octaves, int $sizeX, int $sizeY, int $sizeZ)
+	public static function fromRandomAndOctaves(Random $random, int $octaves, int $sizeX, int $sizeY, int $sizeZ): PerlinOctaveGenerator
 	{
-		return new PerlinOctaveGenerator(self::createOctaves($random, $octaves), $random, $sizeX, $sizeY, $sizeZ);
+		return new PerlinOctaveGenerator(self::createOctaves($random, $octaves), $sizeX, $sizeY, $sizeZ);
 	}
 
 	/** @var int */
@@ -66,7 +66,7 @@ class PerlinOctaveGenerator extends OctaveGenerator
 	 * @param int $sizeY the size on the Y axis
 	 * @param int $sizeZ the size on the Z axis
 	 */
-	public function __construct(array $octaves, Random $rand, int $sizeX, int $sizeY, int $sizeZ)
+	public function __construct(array $octaves, int $sizeX, int $sizeY, int $sizeZ)
 	{
 		parent::__construct($octaves);
 		$this->sizeX = $sizeX;
