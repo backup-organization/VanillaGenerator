@@ -14,7 +14,6 @@ use muqsit\vanillagenerator\generator\overworld\decorator\LakeDecorator;
 use muqsit\vanillagenerator\generator\overworld\decorator\MushroomDecorator;
 use muqsit\vanillagenerator\generator\overworld\decorator\PumpkinDecorator;
 use muqsit\vanillagenerator\generator\overworld\decorator\SugarCaneDecorator;
-use muqsit\vanillagenerator\generator\overworld\decorator\SurfaceCaveDecorator;
 use muqsit\vanillagenerator\generator\overworld\decorator\TallGrassDecorator;
 use muqsit\vanillagenerator\generator\overworld\decorator\TreeDecorator;
 use muqsit\vanillagenerator\generator\overworld\decorator\types\FlowerDecoration;
@@ -103,9 +102,6 @@ class BiomePopulator implements Populator{
 	/** @var CactusDecorator */
 	protected $cactusDecorator;
 
-	/** @var SurfaceCaveDecorator */
-	protected $surfaceCaveDecorator;
-
 	/** @var Populator[] */
 	private $inGroundPopulators = [];
 
@@ -135,12 +131,10 @@ class BiomePopulator implements Populator{
 		$this->sugarCaneDecorator = new SugarCaneDecorator();
 		$this->pumpkinDecorator = new PumpkinDecorator();
 		$this->cactusDecorator = new CactusDecorator();
-		$this->surfaceCaveDecorator = new SurfaceCaveDecorator();
 
 		array_push($this->inGroundPopulators,
 			$this->waterLakeDecorator,
 			$this->lavaLakeDecorator,
-			$this->surfaceCaveDecorator,
 			$this->orePopulator,
 			$this->sandPatchDecorator,
 			$this->clayPatchDecorator,
@@ -166,7 +160,6 @@ class BiomePopulator implements Populator{
 	protected function initPopulators() : void{
 		$this->waterLakeDecorator->setAmount(1);
 		$this->lavaLakeDecorator->setAmount(1);
-		$this->surfaceCaveDecorator->setAmount(1);
 		$this->sandPatchDecorator->setAmount(3);
 		$this->sandPatchDecorator->setRadii(7, 2);
 		$this->sandPatchDecorator->setOverridableBlocks(VanillaBlocks::DIRT(), VanillaBlocks::GRASS());
