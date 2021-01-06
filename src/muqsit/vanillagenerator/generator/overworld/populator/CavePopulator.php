@@ -42,11 +42,9 @@ class CavePopulator implements Populator
 		$this->random = new CaveRandom($random->getSeed());
 
 		$allCondition = [];
-		$liquidBlocks = [];
 		for ($x = 0; $x < 16; $x++) {
 			for ($z = 0; $z < 16; $z++) {
 				$allCondition[$x][$z] = true;
-				$liquidBlocks[$x][$z] = null;
 			}
 		}
 
@@ -61,7 +59,7 @@ class CavePopulator implements Populator
 
 				$this->random->setSeed($rx ^ $rz ^ $random->getSeed());
 
-				$this->recursiveGenerate($currentChunkX, $currentChunkZ, $chunkX, $chunkZ, $chunk, true, $liquidBlocks, $allCondition);
+				$this->recursiveGenerate($currentChunkX, $currentChunkZ, $chunkX, $chunkZ, $chunk, true, $allCondition);
 			}
 		}
 	}
@@ -78,10 +76,9 @@ class CavePopulator implements Populator
 	 * @param int $refChunkZ
 	 * @param Chunk $chunk
 	 * @param bool $addRooms
-	 * @param array $liquidBlocks
-	 * @param array $carvingMask
+	 * @param int[] $carvingMask
 	 */
-	protected function recursiveGenerate(int $chunkX, int $chunkZ, int $refChunkX, int $refChunkZ, Chunk $chunk, bool $addRooms = true, array $liquidBlocks = [], array $carvingMask = []): void
+	protected function recursiveGenerate(int $chunkX, int $chunkZ, int $refChunkX, int $refChunkZ, Chunk $chunk, bool $addRooms = true, array $carvingMask = []): void
 	{
 		$numAttempts = $this->random->nextBoundedInt($this->random->nextBoundedInt($this->random->nextBoundedInt(15) + 1) + 1);
 
@@ -97,7 +94,7 @@ class CavePopulator implements Populator
 			$numAddTunnelCalls = 1;
 
 			if ($addRooms && $this->random->nextBoundedInt(4) == 0) {
-				$this->addRoom($this->random->nextLong(), $chunk, $refChunkX, $refChunkZ, $caveStartX, $caveStartY, $caveStartZ, $liquidBlocks, $carvingMask);
+				$this->addRoom($this->random->nextLong(), $chunk, $refChunkX, $refChunkZ, $caveStartX, $caveStartY, $caveStartZ, $carvingMask);
 				$numAddTunnelCalls += $this->random->nextBoundedInt(4);
 			}
 
@@ -113,17 +110,43 @@ class CavePopulator implements Populator
 					$width *= $this->random->nextFloat() * $this->random->nextFloat() * 3.0 + 1.0;
 				}
 
-				$this->addTunnel($this->random->nextLong(), $chunk, $refChunkX, $refChunkZ, $caveStartX, $caveStartY, $caveStartZ, $width, $yaw, $pitch, 0, 0, 1.0, $liquidBlocks, $carvingMask);
+				$this->addTunnel($this->random->nextLong(), $chunk, $refChunkX, $refChunkZ, $caveStartX, $caveStartY, $caveStartZ, $width, $yaw, $pitch, 0, 0, 1.0, $carvingMask);
 			}
 		}
 	}
 
-	private function addRoom(int $seed, Chunk $chunk, int $refChunkX, int $refChunkZ, float $caveStartX, float $caveStartY, float $caveStartZ, array $liquidBlocks = [], array $carvingMask = []): void
+	/**
+	 * @param int $seed
+	 * @param Chunk $chunk
+	 * @param int $refChunkX
+	 * @param int $refChunkZ
+	 * @param float $caveStartX
+	 * @param float $caveStartY
+	 * @param float $caveStartZ
+	 * @param int[] $carvingMask
+	 */
+	private function addRoom(int $seed, Chunk $chunk, int $refChunkX, int $refChunkZ, float $caveStartX, float $caveStartY, float $caveStartZ, array $carvingMask = []): void
 	{
-		$this->addTunnel($seed, $chunk, $refChunkX, $refChunkZ, $caveStartX, $caveStartY, $caveStartZ, 1.0 + $this->random->nextFloat() * 6.0, 0.0, 0.0, -1, -1, 0.5, $liquidBlocks, $carvingMask);
+		$this->addTunnel($seed, $chunk, $refChunkX, $refChunkZ, $caveStartX, $caveStartY, $caveStartZ, 1.0 + $this->random->nextFloat() * 6.0, 0.0, 0.0, -1, -1, 0.5, $carvingMask);
 	}
 
-	private function addTunnel(int $seed, Chunk $chunk, int $refChunkX, int $refChunkZ, float $caveStartX, float $caveStartY, float $caveStartZ, float $width, float $yaw, float $pitch, int $startCounter, int $endCounter, float $heightModifier, array $liquidBlocks = [], array $carvingMask = []): void
+	/**
+	 * @param int $seed
+	 * @param Chunk $chunk
+	 * @param int $refChunkX
+	 * @param int $refChunkZ
+	 * @param float $caveStartX
+	 * @param float $caveStartY
+	 * @param float $caveStartZ
+	 * @param float $width
+	 * @param float $yaw
+	 * @param float $pitch
+	 * @param int $startCounter
+	 * @param int $endCounter
+	 * @param float $heightModifier
+	 * @param int[] $carvingMask
+	 */
+	private function addTunnel(int $seed, Chunk $chunk, int $refChunkX, int $refChunkZ, float $caveStartX, float $caveStartY, float $caveStartZ, float $width, float $yaw, float $pitch, int $startCounter, int $endCounter, float $heightModifier, array $carvingMask = []): void
 	{
 		$random = new CaveRandom($seed);
 
@@ -190,8 +213,8 @@ class CavePopulator implements Populator
 			$yawModifier = $yawModifier + ($random->nextFloat() - $random->nextFloat()) * $random->nextFloat() * 4.0;
 
 			if ((!$comesFromRoom) && ($startCounter === $randomCounterValue) && ($width > 1.0) && ($endCounter > 0)) {
-				$this->addTunnel($random->nextLong(), $chunk, $refChunkX, $refChunkZ, $caveStartX, $caveStartY, $caveStartZ, $random->nextFloat() * 0.5 + 0.5, $yaw - ((float)M_PI / 2), $pitch / 3.0, $startCounter, $endCounter, 1.0, $liquidBlocks, $carvingMask);
-				$this->addTunnel($random->nextLong(), $chunk, $refChunkX, $refChunkZ, $caveStartX, $caveStartY, $caveStartZ, $random->nextFloat() * 0.5 + 0.5, $yaw + ((float)M_PI / 2), $pitch / 3.0, $startCounter, $endCounter, 1.0, $liquidBlocks, $carvingMask);
+				$this->addTunnel($random->nextLong(), $chunk, $refChunkX, $refChunkZ, $caveStartX, $caveStartY, $caveStartZ, $random->nextFloat() * 0.5 + 0.5, $yaw - ((float)M_PI / 2), $pitch / 3.0, $startCounter, $endCounter, 1.0, $carvingMask);
+				$this->addTunnel($random->nextLong(), $chunk, $refChunkX, $refChunkZ, $caveStartX, $caveStartY, $caveStartZ, $random->nextFloat() * 0.5 + 0.5, $yaw + ((float)M_PI / 2), $pitch / 3.0, $startCounter, $endCounter, 1.0, $carvingMask);
 
 				return;
 			}
@@ -248,9 +271,7 @@ class CavePopulator implements Populator
 									// This conditional is validating the current coordinate against the equation of the ellipsoid, that is,
 									// (x/a)^2 + (z/b)^2 + (y/c)^2 <= 1.
 									if ($yAxisDist > -0.7 && $xAxisDist * $xAxisDist + $yAxisDist * $yAxisDist + $zAxisDist * $zAxisDist < 1.0) {
-										$liquidBlock = $liquidBlocks[$currX & 0xF][$currZ & 0xF];
-
-										$this->digBlock($chunk, $currX, $currY, $currZ, $liquidBlock, self::CAVE_LIQUID_ALTITUDE);
+										$this->digBlock($chunk, $currX, $currY, $currZ, self::CAVE_LIQUID_ALTITUDE);
 									}
 								}
 							}
@@ -265,7 +286,7 @@ class CavePopulator implements Populator
 		}
 	}
 
-	private function digBlock(Chunk $chunk, int $currX, int $currY, int $currZ, ?Vector3 $liquidBlock, int $caveLiquidAltitude): void
+	private function digBlock(Chunk $chunk, int $currX, int $currY, int $currZ, int $caveLiquidAltitude): void
 	{
 		$block = BlockFactory::getInstance()->fromFullBlock($chunk->getFullBlock($currX, $currY, $currZ));
 		$blockAbove = BlockFactory::getInstance()->fromFullBlock($chunk->getFullBlock($currX, $currY + 1, $currZ));
@@ -283,9 +304,9 @@ class CavePopulator implements Populator
 	 * Determines if the Block is suitable to be replaced during cave generation.
 	 * Basically returns true for most common worldgen blocks (e.g. stone, dirt, sand), false if the block is air.
 	 *
-	 * @param $block Block the block's IBlockState
-	 * @param $blockAbove Block the IBlockState of the block above this one
-	 * @return true if the blockState can be replaced
+	 * @param Block $block the block's IBlockState
+	 * @param Block $blockAbove the IBlockState of the block above this one
+	 * @return bool Returns true if the blockState can be replaced
 	 */
 	public static function canReplaceBlock(Block $block, Block $blockAbove): bool
 	{
