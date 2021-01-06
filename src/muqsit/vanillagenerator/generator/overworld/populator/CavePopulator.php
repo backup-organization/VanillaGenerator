@@ -12,7 +12,6 @@ use pocketmine\block\BlockLegacyIds;
 use pocketmine\block\Liquid;
 use pocketmine\block\VanillaBlocks;
 use pocketmine\math\Math;
-use pocketmine\math\Vector3;
 use pocketmine\utils\Random;
 use pocketmine\world\ChunkManager;
 use pocketmine\world\format\Chunk;
@@ -76,7 +75,7 @@ class CavePopulator implements Populator
 	 * @param int $refChunkZ
 	 * @param Chunk $chunk
 	 * @param bool $addRooms
-	 * @param int[] $carvingMask
+	 * @param array $carvingMask
 	 */
 	protected function recursiveGenerate(int $chunkX, int $chunkZ, int $refChunkX, int $refChunkZ, Chunk $chunk, bool $addRooms = true, array $carvingMask = []): void
 	{
@@ -115,37 +114,11 @@ class CavePopulator implements Populator
 		}
 	}
 
-	/**
-	 * @param int $seed
-	 * @param Chunk $chunk
-	 * @param int $refChunkX
-	 * @param int $refChunkZ
-	 * @param float $caveStartX
-	 * @param float $caveStartY
-	 * @param float $caveStartZ
-	 * @param int[] $carvingMask
-	 */
 	private function addRoom(int $seed, Chunk $chunk, int $refChunkX, int $refChunkZ, float $caveStartX, float $caveStartY, float $caveStartZ, array $carvingMask = []): void
 	{
 		$this->addTunnel($seed, $chunk, $refChunkX, $refChunkZ, $caveStartX, $caveStartY, $caveStartZ, 1.0 + $this->random->nextFloat() * 6.0, 0.0, 0.0, -1, -1, 0.5, $carvingMask);
 	}
 
-	/**
-	 * @param int $seed
-	 * @param Chunk $chunk
-	 * @param int $refChunkX
-	 * @param int $refChunkZ
-	 * @param float $caveStartX
-	 * @param float $caveStartY
-	 * @param float $caveStartZ
-	 * @param float $width
-	 * @param float $yaw
-	 * @param float $pitch
-	 * @param int $startCounter
-	 * @param int $endCounter
-	 * @param float $heightModifier
-	 * @param int[] $carvingMask
-	 */
 	private function addTunnel(int $seed, Chunk $chunk, int $refChunkX, int $refChunkZ, float $caveStartX, float $caveStartY, float $caveStartZ, float $width, float $yaw, float $pitch, int $startCounter, int $endCounter, float $heightModifier, array $carvingMask = []): void
 	{
 		$random = new CaveRandom($seed);
