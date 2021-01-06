@@ -31,7 +31,8 @@ use pocketmine\world\ChunkManager;
 use pocketmine\world\format\Chunk;
 use ReflectionClass;
 
-class OverworldPopulator implements Populator{
+class OverworldPopulator implements Populator
+{
 
 	/** @var Populator[] */
 	private $biomePopulators = []; // key = biomeId
@@ -39,7 +40,8 @@ class OverworldPopulator implements Populator{
 	/**
 	 * Creates a populator with biome populators for all vanilla overworld biomes.
 	 */
-	public function __construct(){
+	public function __construct()
+	{
 		$this->registerBiomePopulator(new BiomePopulator()); // defaults applied to all biomes
 		$this->registerBiomePopulator(new PlainsPopulator());
 		$this->registerBiomePopulator(new SunflowerPlainsPopulator());
@@ -70,20 +72,22 @@ class OverworldPopulator implements Populator{
 		*/
 	}
 
-	public function populate(ChunkManager $world, Random $random, int $chunkX, int $chunkZ, Chunk $chunk) : void{
+	public function populate(ChunkManager $world, Random $random, int $chunkX, int $chunkZ, Chunk $chunk): void
+	{
 		$biome = $chunk->getBiomeId(8, 8);
-		if(isset($this->biomePopulators[$biome])){
+		if (isset($this->biomePopulators[$biome])) {
 			$this->biomePopulators[$biome]->populate($world, $random, $chunkX, $chunkZ, $chunk);
 		}
 	}
 
-	private function registerBiomePopulator(BiomePopulator $populator) : void{
+	private function registerBiomePopulator(BiomePopulator $populator): void
+	{
 		$biomes = $populator->getBiomes();
-		if($biomes === null){
+		if ($biomes === null) {
 			$biomes = array_values((new ReflectionClass(BiomeIds::class))->getConstants());
 		}
 
-		foreach($biomes as $biome){
+		foreach ($biomes as $biome) {
 			$this->biomePopulators[$biome] = $populator;
 		}
 	}

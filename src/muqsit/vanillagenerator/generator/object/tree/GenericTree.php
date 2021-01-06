@@ -15,7 +15,8 @@ use pocketmine\world\BlockTransaction;
 use pocketmine\world\ChunkManager;
 use pocketmine\world\World;
 
-class GenericTree extends TerrainObject{
+class GenericTree extends TerrainObject
+{
 
 	/** @var BlockTransaction */
 	protected $transaction;
@@ -38,7 +39,8 @@ class GenericTree extends TerrainObject{
 	 * @param Random $random the PRNG
 	 * @param BlockTransaction $transaction the BlockTransaction used to check for space and to fill in wood and leaves
 	 */
-	public function __construct(Random $random, BlockTransaction $transaction){
+	public function __construct(Random $random, BlockTransaction $transaction)
+	{
 		$this->transaction = $transaction;
 		$this->setOverridables(
 			BlockLegacyIds::AIR,
@@ -54,11 +56,13 @@ class GenericTree extends TerrainObject{
 		$this->setType(TreeType::OAK());
 	}
 
-	final protected function setOverridables(int ...$overridables) : void{
+	final protected function setOverridables(int ...$overridables): void
+	{
 		$this->overridables = array_flip($overridables);
 	}
 
-	final protected function setHeight(int $height) : void{
+	final protected function setHeight(int $height): void
+	{
 		$this->height = $height;
 	}
 
@@ -67,7 +71,8 @@ class GenericTree extends TerrainObject{
 	 *
 	 * @param TreeType $type
 	 */
-	final protected function setType(TreeType $type) : void{
+	final protected function setType(TreeType $type): void
+	{
 		$magicNumber = $type->getMagicNumber();
 		$block_factory = BlockFactory::getInstance();
 		$this->logType = $block_factory->get($magicNumber >= 4 ? BlockLegacyIds::LOG2 : BlockLegacyIds::LOG, $magicNumber & 0x3);
@@ -80,7 +85,8 @@ class GenericTree extends TerrainObject{
 	 *
 	 * @return bool whether this tree can grow without exceeding block height 255; false otherwise.
 	 */
-	public function canHeightFit(int $baseHeight) : bool{
+	public function canHeightFit(int $baseHeight): bool
+	{
 		return $baseHeight >= 1 && $baseHeight + $this->height + 1 < World::Y_MAX;
 	}
 
@@ -89,7 +95,8 @@ class GenericTree extends TerrainObject{
 	 * @param Block $soil the block we're growing on
 	 * @return bool whether this tree can grow on the type of block below it; false otherwise
 	 */
-	public function canPlaceOn(Block $soil) : bool{
+	public function canPlaceOn(Block $soil): bool
+	{
 		$type = $soil->getId();
 		return $type === BlockLegacyIds::GRASS || $type === BlockLegacyIds::DIRT || $type === BlockLegacyIds::FARMLAND;
 	}
@@ -103,25 +110,26 @@ class GenericTree extends TerrainObject{
 	 * @param ChunkManager $world the world to grow in
 	 * @return bool whether this tree has space to grow
 	 */
-	public function canPlace(int $baseX, int $baseY, int $baseZ, ChunkManager $world) : bool{
-		for($y = $baseY; $y <= $baseY + 1 + $this->height; ++$y){
+	public function canPlace(int $baseX, int $baseY, int $baseZ, ChunkManager $world): bool
+	{
+		for ($y = $baseY; $y <= $baseY + 1 + $this->height; ++$y) {
 			// Space requirement
 			$radius = 1; // default radius if above first block
-			if($y === $baseY){
+			if ($y === $baseY) {
 				$radius = 0; // radius at source block y is 0 (only trunk)
-			}elseif($y >= $baseY + 1 + $this->height - 2){
+			} elseif ($y >= $baseY + 1 + $this->height - 2) {
 				$radius = 2; // max radius starting at leaves bottom
 			}
 			// check for block collision on horizontal slices
 			$height = $world->getWorldHeight();
-			for($x = $baseX - $radius; $x <= $baseX + $radius; ++$x){
-				for($z = $baseZ - $radius; $z <= $baseZ + $radius; ++$z){
-					if($y >= 0 && $y < $height){
+			for ($x = $baseX - $radius; $x <= $baseX + $radius; ++$x) {
+				for ($z = $baseZ - $radius; $z <= $baseZ + $radius; ++$z) {
+					if ($y >= 0 && $y < $height) {
 						// we can overlap some blocks around
-						if(!isset($this->overridables[$world->getBlockAt($x, $y, $z)->getId()])){
+						if (!isset($this->overridables[$world->getBlockAt($x, $y, $z)->getId()])) {
 							return false;
 						}
-					}else{ // height out of range
+					} else { // height out of range
 						return false;
 					}
 				}
@@ -141,21 +149,22 @@ class GenericTree extends TerrainObject{
 	 * @param int $blockZ
 	 * @return bool whether successfully grown
 	 */
-	public function generate(ChunkManager $world, Random $random, int $blockX, int $blockY, int $blockZ) : bool{
-		if($this->cannotGenerateAt($blockX, $blockY, $blockZ, $world)){
+	public function generate(ChunkManager $world, Random $random, int $blockX, int $blockY, int $blockZ): bool
+	{
+		if ($this->cannotGenerateAt($blockX, $blockY, $blockZ, $world)) {
 			return false;
 		}
 
 		// generate the leaves
-		for($y = $blockY + $this->height - 3; $y <= $blockY + $this->height; ++$y){
+		for ($y = $blockY + $this->height - 3; $y <= $blockY + $this->height; ++$y) {
 			$n = $y - ($blockY + $this->height);
-			$radius = (int) (1 - $n / 2);
-			for($x = $blockX - $radius; $x <= $blockX + $radius; ++$x){
-				for($z = $blockZ - $radius; $z <= $blockZ + $radius; ++$z){
-					if(abs($x - $blockX) !== $radius
+			$radius = (int)(1 - $n / 2);
+			for ($x = $blockX - $radius; $x <= $blockX + $radius; ++$x) {
+				for ($z = $blockZ - $radius; $z <= $blockZ + $radius; ++$z) {
+					if (abs($x - $blockX) !== $radius
 						|| abs($z - $blockZ) !== $radius
 						|| ($random->nextBoolean() && $n !== 0)
-					){
+					) {
 						$this->replaceIfAirOrLeaves($x, $y, $z, $this->leavesType, $world);
 					}
 				}
@@ -163,7 +172,7 @@ class GenericTree extends TerrainObject{
 		}
 
 		// generate the trunk
-		for($y = 0; $y < $this->height; ++$y){
+		for ($y = 0; $y < $this->height; ++$y) {
 			$this->replaceIfAirOrLeaves($blockX, $blockY + $y, $blockZ, $this->logType, $world);
 		}
 
@@ -183,7 +192,8 @@ class GenericTree extends TerrainObject{
 	 * @param ChunkManager $world the world to grow in
 	 * @return bool whether any of the checks prevent us from generating, false otherwise
 	 */
-	protected function cannotGenerateAt(int $baseX, int $baseY, int $baseZ, ChunkManager $world) : bool{
+	protected function cannotGenerateAt(int $baseX, int $baseY, int $baseZ, ChunkManager $world): bool
+	{
 		return !$this->canHeightFit($baseY)
 			|| !$this->canPlaceOn($world->getBlockAt($baseX, $baseY - 1, $baseZ))
 			|| !$this->canPlace($baseX, $baseY, $baseZ, $world);
@@ -198,9 +208,10 @@ class GenericTree extends TerrainObject{
 	 * @param Block $newMaterial the new block type
 	 * @param ChunkManager $world the world we are generating in
 	 */
-	protected function replaceIfAirOrLeaves(int $x, int $y, int $z, Block $newMaterial, ChunkManager $world) : void{
+	protected function replaceIfAirOrLeaves(int $x, int $y, int $z, Block $newMaterial, ChunkManager $world): void
+	{
 		$oldMaterial = $world->getBlockAt($x, $y, $z)->getId();
-		if($oldMaterial === BlockLegacyIds::AIR || $oldMaterial === BlockLegacyIds::LEAVES){
+		if ($oldMaterial === BlockLegacyIds::AIR || $oldMaterial === BlockLegacyIds::LEAVES) {
 			$this->transaction->addBlockAt($x, $y, $z, $newMaterial);
 		}
 	}

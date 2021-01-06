@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace muqsit\vanillagenerator\generator\noise\bukkit;
 
-abstract class OctaveGenerator extends BaseOctaveGenerator{
+abstract class OctaveGenerator extends BaseOctaveGenerator
+{
 
 	/**
 	 * Generates noise for the 3D coordinates using the specified number of
@@ -18,7 +19,8 @@ abstract class OctaveGenerator extends BaseOctaveGenerator{
 	 * @param bool $normalized If true, normalize the value to [-1, 1]
 	 * @return float resulting noise
 	 */
-	public function noise(float $x, float $y, float $z, float $frequency, float $amplitude, bool $normalized) : float{
+	public function noise(float $x, float $y, float $z, float $frequency, float $amplitude, bool $normalized): float
+	{
 		$result = 0.0;
 		$amp = 1.0;
 		$freq = 1.0;
@@ -28,14 +30,14 @@ abstract class OctaveGenerator extends BaseOctaveGenerator{
 		$y *= $this->yScale;
 		$z *= $this->zScale;
 
-		foreach($this->octaves as $octave){
+		foreach ($this->octaves as $octave) {
 			$result += $octave->noise3d($x * $freq, $y * $freq, $z * $freq) * $amp;
 			$max += $amp;
 			$freq *= $frequency;
 			$amp *= $amplitude;
 		}
 
-		if($normalized){
+		if ($normalized) {
 			$result /= $max;
 		}
 

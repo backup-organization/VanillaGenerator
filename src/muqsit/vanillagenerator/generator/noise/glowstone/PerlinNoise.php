@@ -7,7 +7,8 @@ namespace muqsit\vanillagenerator\generator\noise\glowstone;
 use muqsit\vanillagenerator\generator\noise\bukkit\BasePerlinNoiseGenerator;
 use pocketmine\utils\Random;
 
-class PerlinNoise extends BasePerlinNoiseGenerator{
+class PerlinNoise extends BasePerlinNoiseGenerator
+{
 	/** @noinspection MagicMethodsValidityInspection */
 	/** @noinspection PhpMissingParentConstructorInspection */
 
@@ -15,7 +16,8 @@ class PerlinNoise extends BasePerlinNoiseGenerator{
 	 * Creates an instance using the given PRNG.
 	 * @param Random $rand the PRNG used to generate the seed permutation
 	 */
-	public function __construct(Random $rand){
+	public function __construct(Random $rand)
+	{
 		$this->offsetX = $rand->nextFloat() * 256;
 		$this->offsetY = $rand->nextFloat() * 256;
 		$this->offsetZ = $rand->nextFloat() * 256;
@@ -29,11 +31,11 @@ class PerlinNoise extends BasePerlinNoiseGenerator{
 		// Then randomly shuffle the values so you have a table of 256 random values, but only
 		// contains the values between 0 and 255."
 		// source: https://code.google.com/p/fractalterraingeneration/wiki/Perlin_Noise
-		for($i = 0; $i < 256; ++$i){
+		for ($i = 0; $i < 256; ++$i) {
 			$this->perm[$i] = $i;
 		}
 
-		for($i = 0; $i < 256; ++$i){
+		for ($i = 0; $i < 256; ++$i) {
 			$pos = $rand->nextBoundedInt(256 - $i) + $i;
 			$old = $this->perm[$i];
 			$this->perm[$i] = $this->perm[$pos];
@@ -42,8 +44,9 @@ class PerlinNoise extends BasePerlinNoiseGenerator{
 		}
 	}
 
-	public static function floor(float $x) : int{
-		$floored = (int) $x;
+	public static function floor(float $x): int
+	{
+		$floored = (int)$x;
 		return $x < $floored ? $floored - 1 : $floored;
 	}
 
@@ -63,8 +66,9 @@ class PerlinNoise extends BasePerlinNoiseGenerator{
 	 * @param float $amplitude the amplitude parameter
 	 * @return float[] noise with this layer of noise added
 	 */
-	public function getNoise(array &$noise, float $x, float $y, float $z, int $sizeX, int $sizeY, int $sizeZ, float $scaleX, float $scaleY, float $scaleZ, float $amplitude) : array{
-		if($sizeY === 1){
+	public function getNoise(array &$noise, float $x, float $y, float $z, int $sizeX, int $sizeY, int $sizeZ, float $scaleX, float $scaleY, float $scaleZ, float $amplitude): array
+	{
+		if ($sizeY === 1) {
 			return $this->get2dNoise($noise, $x, $z, $sizeX, $sizeZ, $scaleX, $scaleZ, $amplitude);
 		}
 
@@ -82,15 +86,16 @@ class PerlinNoise extends BasePerlinNoiseGenerator{
 	 * @param float $amplitude
 	 * @return float[]
 	 */
-	protected function get2dNoise(array &$noise, float $x, float $z, int $sizeX, int $sizeZ, float $scaleX, float $scaleZ, float $amplitude) : array{
+	protected function get2dNoise(array &$noise, float $x, float $z, int $sizeX, int $sizeZ, float $scaleX, float $scaleZ, float $amplitude): array
+	{
 		$index = -1;
-		for($i = 0; $i < $sizeX; ++$i){
+		for ($i = 0; $i < $sizeX; ++$i) {
 			$dx = $x + $this->offsetX + $i * $scaleX;
 			$floorX = self::floor($dx);
 			$ix = $floorX & 255;
 			$dx -= $floorX;
 			$fx = self::fade($dx);
-			for($j = 0; $j < $sizeZ; ++$j){
+			for ($j = 0; $j < $sizeZ; ++$j) {
 				$dz = $z + $this->offsetZ + $j * $scaleZ;
 				$floorZ = self::floor($dz);
 				$iz = $floorZ & 255;
@@ -126,32 +131,33 @@ class PerlinNoise extends BasePerlinNoiseGenerator{
 	 * @param float $amplitude
 	 * @return float[]
 	 */
-	protected function get3dNoise(array &$noise, float $x, float $y, float $z, int $sizeX, int $sizeY, int $sizeZ, float $scaleX, float $scaleY, float $scaleZ, float $amplitude) : array{
+	protected function get3dNoise(array &$noise, float $x, float $y, float $z, int $sizeX, int $sizeY, int $sizeZ, float $scaleX, float $scaleY, float $scaleZ, float $amplitude): array
+	{
 		$n = -1;
 		$x1 = 0;
 		$x2 = 0;
 		$x3 = 0;
 		$x4 = 0;
 		$index = -1;
-		for($i = 0; $i < $sizeX; ++$i){
+		for ($i = 0; $i < $sizeX; ++$i) {
 			$dx = $x + $this->offsetX + $i * $scaleX;
 			$floorX = self::floor($dx);
 			$ix = $floorX & 255;
 			$dx -= $floorX;
 			$fx = self::fade($dx);
-			for($j = 0; $j < $sizeZ; ++$j){
+			for ($j = 0; $j < $sizeZ; ++$j) {
 				$dz = $z + $this->offsetZ + $j * $scaleZ;
 				$floorZ = self::floor($dz);
 				$iz = $floorZ & 255;
 				$dz -= $floorZ;
 				$fz = self::fade($dz);
-				for($k = 0; $k < $sizeY; ++$k){
+				for ($k = 0; $k < $sizeY; ++$k) {
 					$dy = $y + $this->offsetY + $k * $scaleY;
 					$floorY = self::floor($dy);
 					$iy = $floorY & 255;
 					$dy -= $floorY;
 					$fy = self::fade($dy);
-					if($k === 0 || $iy !== $n){
+					if ($k === 0 || $iy !== $n) {
 						$n = $iy;
 						// Hash coordinates of the cube corners
 						$a = $this->perm[$ix] + $iy;

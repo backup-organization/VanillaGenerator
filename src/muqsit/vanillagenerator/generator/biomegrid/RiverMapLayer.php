@@ -6,7 +6,8 @@ namespace muqsit\vanillagenerator\generator\biomegrid;
 
 use muqsit\vanillagenerator\generator\overworld\biome\BiomeIds;
 
-class RiverMapLayer extends MapLayer{
+class RiverMapLayer extends MapLayer
+{
 
 	/** @var int[] */
 	private static $OCEANS = [BiomeIds::OCEAN => 0, BiomeIds::DEEP_OCEAN => 0];
@@ -30,14 +31,16 @@ class RiverMapLayer extends MapLayer{
 	/** @var MapLayer */
 	private $mergeLayer;
 
-	public function __construct(int $seed, MapLayer $belowLayer, ?MapLayer $mergeLayer = null){
+	public function __construct(int $seed, MapLayer $belowLayer, ?MapLayer $mergeLayer = null)
+	{
 		parent::__construct($seed);
 		$this->belowLayer = $belowLayer;
 		$this->mergeLayer = $mergeLayer;
 	}
 
-	public function generateValues(int $x, int $z, int $sizeX, int $sizeZ) : array{
-		if($this->mergeLayer === null){
+	public function generateValues(int $x, int $z, int $sizeX, int $sizeZ): array
+	{
+		if ($this->mergeLayer === null) {
 			return $this->generateRivers($x, $z, $sizeX, $sizeZ);
 		}
 
@@ -51,7 +54,8 @@ class RiverMapLayer extends MapLayer{
 	 * @param int $sizeZ
 	 * @return int[]
 	 */
-	private function generateRivers(int $x, int $z, int $sizeX, int $sizeZ) : array{
+	private function generateRivers(int $x, int $z, int $sizeX, int $sizeZ): array
+	{
 		$gridX = $x - 1;
 		$gridZ = $z - 1;
 		$gridSizeX = $sizeX + 2;
@@ -59,8 +63,8 @@ class RiverMapLayer extends MapLayer{
 
 		$values = $this->belowLayer->generateValues($gridX, $gridZ, $gridSizeX, $gridSizeZ);
 		$finalValues = [];
-		for($i = 0; $i < $sizeZ; ++$i){
-			for($j = 0; $j < $sizeX; ++$j){
+		for ($i = 0; $i < $sizeZ; ++$i) {
+			for ($j = 0; $j < $sizeX; ++$j) {
 				// This applies rivers using Von Neumann neighborhood
 				$centerVal = $values[$j + 1 + ($i + 1) * $gridSizeX] & 1;
 				$upperVal = $values[$j + 1 + $i * $gridSizeX] & 1;
@@ -68,7 +72,7 @@ class RiverMapLayer extends MapLayer{
 				$leftVal = $values[$j + ($i + 1) * $gridSizeX] & 1;
 				$rightVal = $values[$j + 2 + ($i + 1) * $gridSizeX] & 1;
 				$val = self::$CLEAR_VALUE;
-				if($centerVal !== $upperVal || $centerVal !== $lowerVal || $centerVal !== $leftVal || $centerVal !== $rightVal){
+				if ($centerVal !== $upperVal || $centerVal !== $lowerVal || $centerVal !== $leftVal || $centerVal !== $rightVal) {
 					$val = self::$RIVER_VALUE;
 				}
 				$finalValues[$j + $i * $sizeX] = $val;
@@ -84,16 +88,17 @@ class RiverMapLayer extends MapLayer{
 	 * @param int $sizeZ
 	 * @return int[]
 	 */
-	private function mergeRivers(int $x, int $z, int $sizeX, int $sizeZ) : array{
+	private function mergeRivers(int $x, int $z, int $sizeX, int $sizeZ): array
+	{
 		$values = $this->belowLayer->generateValues($x, $z, $sizeX, $sizeZ);
 		$mergeValues = $this->mergeLayer->generateValues($x, $z, $sizeX, $sizeZ);
 
 		$finalValues = [];
-		for($i = 0; $i < $sizeX * $sizeZ; ++$i){
+		for ($i = 0; $i < $sizeX * $sizeZ; ++$i) {
 			$val = $mergeValues[$i];
-			if(isset(self::$OCEANS[$mergeValues[$i]])){
+			if (isset(self::$OCEANS[$mergeValues[$i]])) {
 				$val = $mergeValues[$i];
-			}elseif($values[$i] === self::$RIVER_VALUE){
+			} elseif ($values[$i] === self::$RIVER_VALUE) {
 				$val = self::$SPECIAL_RIVERS[$mergeValues[$i]] ?? BiomeIds::RIVER;
 			}
 			$finalValues[$i] = $val;

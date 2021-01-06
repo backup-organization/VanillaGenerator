@@ -15,12 +15,14 @@ use pocketmine\utils\Random;
 use pocketmine\world\ChunkManager;
 use pocketmine\world\format\Chunk;
 
-class MegaTaigaPopulator extends TaigaPopulator{
+class MegaTaigaPopulator extends TaigaPopulator
+{
 
 	/** @var TreeDecoration[] */
 	protected static $TREES;
 
-	protected static function initTrees() : void{
+	protected static function initTrees(): void
+	{
 		self::$TREES = [
 			new TreeDecoration(RedwoodTree::class, 52),
 			new TreeDecoration(TallRedwoodTree::class, 26),
@@ -29,19 +31,22 @@ class MegaTaigaPopulator extends TaigaPopulator{
 		];
 	}
 
-	public function getBiomes() : ?array{
+	public function getBiomes(): ?array
+	{
 		return [BiomeIds::REDWOOD_TAIGA, BiomeIds::REDWOOD_TAIGA_HILLS];
 	}
 
 	/** @var StoneBoulderDecorator */
 	protected $stoneBoulderDecorator;
 
-	public function __construct(){
+	public function __construct()
+	{
 		parent::__construct();
 		$this->stoneBoulderDecorator = new StoneBoulderDecorator();
 	}
 
-	protected function initPopulators() : void{
+	protected function initPopulators(): void
+	{
 		$this->treeDecorator->setTrees(...self::$TREES);
 		$this->tallGrassDecorator->setAmount(7);
 		$this->deadBushDecorator->setAmount(0);
@@ -49,7 +54,8 @@ class MegaTaigaPopulator extends TaigaPopulator{
 		$this->taigaRedMushroomDecorator->setAmount(3);
 	}
 
-	protected function populateOnGround(ChunkManager $world, Random $random, int $chunkX, int $chunkZ, Chunk $chunk) : void{
+	protected function populateOnGround(ChunkManager $world, Random $random, int $chunkX, int $chunkZ, Chunk $chunk): void
+	{
 		$this->stoneBoulderDecorator->populate($world, $random, $chunkX, $chunkZ, $chunk);
 		parent::populateOnGround($world, $random, $chunkX, $chunkZ, $chunk);
 	}

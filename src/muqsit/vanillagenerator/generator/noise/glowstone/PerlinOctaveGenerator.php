@@ -8,25 +8,28 @@ use muqsit\vanillagenerator\generator\noise\bukkit\NoiseGenerator;
 use muqsit\vanillagenerator\generator\noise\bukkit\OctaveGenerator;
 use pocketmine\utils\Random;
 
-class PerlinOctaveGenerator extends OctaveGenerator{
+class PerlinOctaveGenerator extends OctaveGenerator
+{
 
 	/**
 	 * @param Random $rand
 	 * @param int $octaves
 	 * @return PerlinNoise[]
 	 */
-	protected static function createOctaves(Random $rand, int $octaves) : array{
+	protected static function createOctaves(Random $rand, int $octaves): array
+	{
 		$result = [];
 
-		for($i = 0; $i < $octaves; ++$i){
+		for ($i = 0; $i < $octaves; ++$i) {
 			$result[$i] = new PerlinNoise($rand);
 		}
 
 		return $result;
 	}
 
-	protected static function floor(float $x) : int{
-		return $x >= 0 ? (int) $x : (int) $x - 1;
+	protected static function floor(float $x): int
+	{
+		return $x >= 0 ? (int)$x : (int)$x - 1;
 	}
 
 	/**
@@ -37,7 +40,8 @@ class PerlinOctaveGenerator extends OctaveGenerator{
 	 * @param int $sizeZ
 	 * @return PerlinOctaveGenerator
 	 */
-	public static function fromRandomAndOctaves(Random $random, int $octaves, int $sizeX, int $sizeY, int $sizeZ){
+	public static function fromRandomAndOctaves(Random $random, int $octaves, int $sizeX, int $sizeY, int $sizeZ)
+	{
 		return new PerlinOctaveGenerator(self::createOctaves($random, $octaves), $random, $sizeX, $sizeY, $sizeZ);
 	}
 
@@ -62,7 +66,8 @@ class PerlinOctaveGenerator extends OctaveGenerator{
 	 * @param int $sizeY the size on the Y axis
 	 * @param int $sizeZ the size on the Z axis
 	 */
-	public function __construct(array $octaves, Random $rand, int $sizeX, int $sizeY, int $sizeZ){
+	public function __construct(array $octaves, Random $rand, int $sizeX, int $sizeY, int $sizeZ)
+	{
 		parent::__construct($octaves);
 		$this->sizeX = $sizeX;
 		$this->sizeY = $sizeY;
@@ -70,27 +75,33 @@ class PerlinOctaveGenerator extends OctaveGenerator{
 		$this->noise = array_fill(0, $sizeX * $sizeY * $sizeZ, 0.0);
 	}
 
-	public function getSizeX() : int{
+	public function getSizeX(): int
+	{
 		return $this->sizeX;
 	}
 
-	public function getSizeY() : int{
+	public function getSizeY(): int
+	{
 		return $this->sizeY;
 	}
 
-	public function getSizeZ() : int{
+	public function getSizeZ(): int
+	{
 		return $this->sizeZ;
 	}
 
-	public function setSizeX(int $sizeX) : void{
+	public function setSizeX(int $sizeX): void
+	{
 		$this->sizeX = $sizeX;
 	}
 
-	public function setSizeY(int $sizeY) : void{
+	public function setSizeY(int $sizeY): void
+	{
 		$this->sizeY = $sizeY;
 	}
 
-	public function setSizeZ(int $sizeZ) : void{
+	public function setSizeZ(int $sizeZ): void
+	{
 		$this->sizeZ = $sizeZ;
 	}
 
@@ -104,7 +115,8 @@ class PerlinOctaveGenerator extends OctaveGenerator{
 	 * @param float $persistence layer n's amplitude as a multiple of layer {@code n - 1}'s amplitude
 	 * @return float[] the noise array
 	 */
-	public function getFractalBrownianMotion(float $x, float $y, float $z, float $lacunarity, float $persistence) : array{
+	public function getFractalBrownianMotion(float $x, float $y, float $z, float $lacunarity, float $persistence): array
+	{
 		$this->noise = array_fill(0, $this->sizeX * $this->sizeY * $this->sizeZ, 0.0);
 
 		$freq = 1;
@@ -119,7 +131,7 @@ class PerlinOctaveGenerator extends OctaveGenerator{
 		// input, leading to strange oddities in terrain generation like the old minecraft farland
 		// symptoms.
 		/** @var PerlinNoise $octave */
-		foreach($this->octaves as $octave){
+		foreach ($this->octaves as $octave) {
 			$dx = $x * $freq;
 			$dz = $z * $freq;
 			// compute integer part

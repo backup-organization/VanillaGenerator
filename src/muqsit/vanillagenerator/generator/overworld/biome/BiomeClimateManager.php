@@ -7,7 +7,8 @@ namespace muqsit\vanillagenerator\generator\overworld\biome;
 use muqsit\vanillagenerator\generator\noise\glowstone\SimplexOctaveGenerator;
 use pocketmine\utils\Random;
 
-final class BiomeClimateManager{
+final class BiomeClimateManager
+{
 
 	/** @var SimplexOctaveGenerator */
 	private static $noiseGen;
@@ -18,7 +19,8 @@ final class BiomeClimateManager{
 	/** @var BiomeClimate[] */
 	private static $climates = [];
 
-	public static function init() : void{
+	public static function init(): void
+	{
 		self::$noiseGen = SimplexOctaveGenerator::fromRandomAndOctaves(new Random(1234), 1, 0, 0, 0);
 		self::$noiseGen->setScale(1 / 8.0);
 
@@ -101,45 +103,54 @@ final class BiomeClimateManager{
 		self::register(new BiomeClimate(0.5, 0.5, false), BiomeIds::SKY);
 	}
 
-	public static function register(BiomeClimate $climate, int ...$biomeIds) : void{
-		foreach($biomeIds as $biomeId){
+	public static function register(BiomeClimate $climate, int ...$biomeIds): void
+	{
+		foreach ($biomeIds as $biomeId) {
 			self::$climates[$biomeId] = $climate;
 		}
 	}
 
-	public static function get(int $biome) : BiomeClimate{
+	public static function get(int $biome): BiomeClimate
+	{
 		return self::$climates[$biome] ?? self::$default;
 	}
 
-	public static function getBiomeTemperature(int $biome) : float{
+	public static function getBiomeTemperature(int $biome): float
+	{
 		return self::get($biome)->getTemperature();
 	}
 
-	public static function getBiomeHumidity(int $biome) : float{
+	public static function getBiomeHumidity(int $biome): float
+	{
 		return self::get($biome)->getHumidity();
 	}
 
-	public static function isWet(int $biome) : bool{
+	public static function isWet(int $biome): bool
+	{
 		return self::getBiomeHumidity($biome) > 0.85;
 	}
 
-	public static function isCold(int $biome, int $x, int $y, int $z) : bool{
+	public static function isCold(int $biome, int $x, int $y, int $z): bool
+	{
 		return self::getVariatedTemperature($biome, $x, $y, $z) < 0.15;
 	}
 
-	public static function isRainy(int $biome, int $x, int $y, int $z) : bool{
+	public static function isRainy(int $biome, int $x, int $y, int $z): bool
+	{
 		return self::get($biome)->isRainy() && !self::isCold($biome, $x, $y, $z);
 	}
 
-	public static function isSnowy(int $biome, int $x, int $y, int $z) : bool{
+	public static function isSnowy(int $biome, int $x, int $y, int $z): bool
+	{
 		return self::get($biome)->isRainy() && self::isCold($biome, $x, $y, $z);
 	}
 
-	private static function getVariatedTemperature(int $biome, int $x, int $y, int $z) : float{
+	private static function getVariatedTemperature(int $biome, int $x, int $y, int $z): float
+	{
 		$temp = self::get($biome)->getTemperature();
-		if($y > 64){
+		if ($y > 64) {
 			$variation = self::$noiseGen->noise($x, $z, 0, 0.5, 2.0, false) * 4.0;
-			return $temp - ($variation + (float) ($y - 64)) * 0.05 / 30.0;
+			return $temp - ($variation + (float)($y - 64)) * 0.05 / 30.0;
 		}
 
 		return $temp;

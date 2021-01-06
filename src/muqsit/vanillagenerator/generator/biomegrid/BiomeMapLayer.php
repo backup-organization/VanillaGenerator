@@ -6,7 +6,8 @@ namespace muqsit\vanillagenerator\generator\biomegrid;
 
 use muqsit\vanillagenerator\generator\overworld\biome\BiomeIds;
 
-class BiomeMapLayer extends MapLayer{
+class BiomeMapLayer extends MapLayer
+{
 
 	/** @var int[] */
 	private static $WARM = [BiomeIds::DESERT, BiomeIds::DESERT, BiomeIds::DESERT, BiomeIds::SAVANNA, BiomeIds::SAVANNA, BiomeIds::PLAINS];
@@ -32,21 +33,23 @@ class BiomeMapLayer extends MapLayer{
 	/** @var MapLayer */
 	private $belowLayer;
 
-	public function __construct(int $seed, MapLayer $belowLayer){
+	public function __construct(int $seed, MapLayer $belowLayer)
+	{
 		parent::__construct($seed);
 		$this->belowLayer = $belowLayer;
 	}
 
-	public function generateValues(int $x, int $z, int $sizeX, int $sizeZ) : array{
+	public function generateValues(int $x, int $z, int $sizeX, int $sizeZ): array
+	{
 		$values = $this->belowLayer->generateValues($x, $z, $sizeX, $sizeZ);
 
 		$finalValues = [];
-		for($i = 0; $i < $sizeZ; ++$i){
-			for($j = 0; $j < $sizeX; ++$j){
+		for ($i = 0; $i < $sizeZ; ++$i) {
+			for ($j = 0; $j < $sizeX; ++$j) {
 				$val = $values[$j + $i * $sizeX];
-				if($val !== 0){
+				if ($val !== 0) {
 					$this->setCoordsSeed($x + $j, $z + $i);
-					switch($val){
+					switch ($val) {
 						case 1:
 							$val = self::$DRY[$this->nextInt(count(self::$DRY))];
 							break;

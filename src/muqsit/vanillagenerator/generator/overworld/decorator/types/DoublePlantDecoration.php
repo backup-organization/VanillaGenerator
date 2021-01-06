@@ -6,7 +6,8 @@ namespace muqsit\vanillagenerator\generator\overworld\decorator\types;
 
 use pocketmine\block\DoublePlant;
 
-final class DoublePlantDecoration{
+final class DoublePlantDecoration
+{
 
 	/** @var DoublePlant */
 	private $block;
@@ -14,16 +15,19 @@ final class DoublePlantDecoration{
 	/** @var int */
 	private $weight;
 
-	public function __construct(DoublePlant $block, int $weight){
+	public function __construct(DoublePlant $block, int $weight)
+	{
 		$this->block = $block;
 		$this->weight = $weight;
 	}
 
-	public function getBlock() : DoublePlant{
+	public function getBlock(): DoublePlant
+	{
 		return $this->block;
 	}
 
-	public function getWeight() : int{
+	public function getWeight(): int
+	{
 		return $this->weight;
 	}
 }

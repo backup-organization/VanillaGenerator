@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace muqsit\vanillagenerator\generator\biomegrid;
 
-class ZoomMapLayer extends MapLayer{
+class ZoomMapLayer extends MapLayer
+{
 
 	public const NORMAL = 0;
 	public const BLURRY = 1;
@@ -15,13 +16,15 @@ class ZoomMapLayer extends MapLayer{
 	/** @var int */
 	private $zoomType;
 
-	public function __construct(int $seed, MapLayer $belowLayer, int $zoomType = self::NORMAL){
+	public function __construct(int $seed, MapLayer $belowLayer, int $zoomType = self::NORMAL)
+	{
 		parent::__construct($seed);
 		$this->belowLayer = $belowLayer;
 		$this->zoomType = $zoomType;
 	}
 
-	public function generateValues(int $x, int $z, int $sizeX, int $sizeZ) : array{
+	public function generateValues(int $x, int $z, int $sizeX, int $sizeZ): array
+	{
 		$gridX = $x >> 1;
 		$gridZ = $z >> 1;
 		$gridSizeX = ($sizeX >> 1) + 2;
@@ -31,11 +34,11 @@ class ZoomMapLayer extends MapLayer{
 		$zoomSizeX = $gridSizeX - 1 << 1;
 		// $zoomSizeZ = $gridSizeZ - 1 << 1;
 		$tmpValues = [];
-		for($i = 0; $i < $gridSizeZ - 1; ++$i){
+		for ($i = 0; $i < $gridSizeZ - 1; ++$i) {
 			$n = $i * 2 * $zoomSizeX;
 			$upperLeftVal = $values[$i * $gridSizeX];
 			$lowerLeftVal = $values[($i + 1) * $gridSizeX];
-			for($j = 0; $j < $gridSizeX - 1; ++$j){
+			for ($j = 0; $j < $gridSizeX - 1; ++$j) {
 				$this->setCoordsSeed($gridX + $j << 1, $gridZ + $i << 1);
 				$tmpValues[$n] = $upperLeftVal;
 				$tmpValues[$n + $zoomSizeX] = $this->nextInt(2) > 0 ? $upperLeftVal : $lowerLeftVal;
@@ -50,8 +53,8 @@ class ZoomMapLayer extends MapLayer{
 		}
 
 		$finalValues = [];
-		for($i = 0; $i < $sizeZ; ++$i){
-			for($j = 0; $j < $sizeX; ++$j){
+		for ($i = 0; $i < $sizeZ; ++$i) {
+			for ($j = 0; $j < $sizeX; ++$j) {
 				$finalValues[$j + $i * $sizeX] = $tmpValues[$j + ($i + ($z & 1)) * $zoomSizeX + ($x & 1)];
 			}
 		}
@@ -59,36 +62,37 @@ class ZoomMapLayer extends MapLayer{
 		return $finalValues;
 	}
 
-	private function getNearest(int $upperLeftVal, int $upperRightVal, int $lowerLeftVal, int $lowerRightVal) : int{
-		if($this->zoomType === self::NORMAL){
-			if($upperRightVal === $lowerLeftVal && $lowerLeftVal === $lowerRightVal){
+	private function getNearest(int $upperLeftVal, int $upperRightVal, int $lowerLeftVal, int $lowerRightVal): int
+	{
+		if ($this->zoomType === self::NORMAL) {
+			if ($upperRightVal === $lowerLeftVal && $lowerLeftVal === $lowerRightVal) {
 				return $upperRightVal;
 			}
-			if($upperLeftVal === $upperRightVal && $upperLeftVal === $lowerLeftVal){
+			if ($upperLeftVal === $upperRightVal && $upperLeftVal === $lowerLeftVal) {
 				return $upperLeftVal;
 			}
-			if($upperLeftVal === $upperRightVal && $upperLeftVal === $lowerRightVal){
+			if ($upperLeftVal === $upperRightVal && $upperLeftVal === $lowerRightVal) {
 				return $upperLeftVal;
 			}
-			if($upperLeftVal === $lowerLeftVal && $upperLeftVal === $lowerRightVal){
+			if ($upperLeftVal === $lowerLeftVal && $upperLeftVal === $lowerRightVal) {
 				return $upperLeftVal;
 			}
-			if($upperLeftVal === $upperRightVal && $lowerLeftVal !== $lowerRightVal){
+			if ($upperLeftVal === $upperRightVal && $lowerLeftVal !== $lowerRightVal) {
 				return $upperLeftVal;
 			}
-			if($upperLeftVal === $lowerLeftVal && $upperRightVal !== $lowerRightVal){
+			if ($upperLeftVal === $lowerLeftVal && $upperRightVal !== $lowerRightVal) {
 				return $upperLeftVal;
 			}
-			if($upperLeftVal === $lowerRightVal && $upperRightVal !== $lowerLeftVal){
+			if ($upperLeftVal === $lowerRightVal && $upperRightVal !== $lowerLeftVal) {
 				return $upperLeftVal;
 			}
-			if($upperRightVal === $lowerLeftVal && $upperLeftVal !== $lowerRightVal){
+			if ($upperRightVal === $lowerLeftVal && $upperLeftVal !== $lowerRightVal) {
 				return $upperRightVal;
 			}
-			if($upperRightVal === $lowerRightVal && $upperLeftVal !== $lowerLeftVal){
+			if ($upperRightVal === $lowerRightVal && $upperLeftVal !== $lowerLeftVal) {
 				return $upperRightVal;
 			}
-			if($lowerLeftVal === $lowerRightVal && $upperLeftVal !== $upperRightVal){
+			if ($lowerLeftVal === $lowerRightVal && $upperLeftVal !== $upperRightVal) {
 				return $lowerLeftVal;
 			}
 		}

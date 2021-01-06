@@ -11,7 +11,8 @@ use muqsit\vanillagenerator\generator\overworld\decorator\types\DoublePlantDecor
 use muqsit\vanillagenerator\generator\overworld\decorator\types\TreeDecoration;
 use pocketmine\block\VanillaBlocks;
 
-class SavannaPopulator extends BiomePopulator{
+class SavannaPopulator extends BiomePopulator
+{
 
 	/** @var DoublePlantDecoration[] */
 	protected static $DOUBLE_PLANTS;
@@ -19,21 +20,24 @@ class SavannaPopulator extends BiomePopulator{
 	/** @var TreeDecoration[] */
 	protected static $TREES;
 
-	public static function init() : void{
+	public static function init(): void
+	{
 		parent::init();
 		self::$DOUBLE_PLANTS = [
 			new DoublePlantDecoration(VanillaBlocks::DOUBLE_TALLGRASS(), 1)
 		];
 	}
 
-	protected static function initTrees() : void{
+	protected static function initTrees(): void
+	{
 		self::$TREES = [
 			new TreeDecoration(AcaciaTree::class, 4),
 			new TreeDecoration(GenericTree::class, 4)
 		];
 	}
 
-	protected function initPopulators() : void{
+	protected function initPopulators(): void
+	{
 		$this->doublePlantDecorator->setAmount(7);
 		$this->doublePlantDecorator->setDoublePlants(...self::$DOUBLE_PLANTS);
 		$this->treeDecorator->setAmount(1);
@@ -42,8 +46,10 @@ class SavannaPopulator extends BiomePopulator{
 		$this->tallGrassDecorator->setAmount(20);
 	}
 
-	public function getBiomes() : ?array{
+	public function getBiomes(): ?array
+	{
 		return [BiomeIds::SAVANNA, BiomeIds::SAVANNA_ROCK];
 	}
 }
+
 SavannaPopulator::init();

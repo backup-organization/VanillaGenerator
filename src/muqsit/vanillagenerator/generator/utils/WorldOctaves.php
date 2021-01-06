@@ -6,7 +6,8 @@ namespace muqsit\vanillagenerator\generator\utils;
 
 use muqsit\vanillagenerator\generator\noise\bukkit\OctaveGenerator;
 
-class WorldOctaves{
+class WorldOctaves
+{
 
 	/** @var OctaveGenerator */
 	public $height;
@@ -29,7 +30,8 @@ class WorldOctaves{
 		OctaveGenerator $roughness2,
 		OctaveGenerator $detail,
 		OctaveGenerator $surface
-	){
+	)
+	{
 		$this->height = $height;
 		$this->roughness = $roughness;
 		$this->roughness2 = $roughness2;

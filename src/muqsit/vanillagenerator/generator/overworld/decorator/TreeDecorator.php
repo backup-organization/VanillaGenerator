@@ -13,24 +13,26 @@ use pocketmine\world\BlockTransaction;
 use pocketmine\world\ChunkManager;
 use pocketmine\world\format\Chunk;
 
-class TreeDecorator extends Decorator{
+class TreeDecorator extends Decorator
+{
 
 	/**
 	 * @param Random $random
 	 * @param TreeDecoration[] $decorations
 	 * @return string a GenericTree class
 	 */
-	private static function getRandomTree(Random $random, array $decorations) : ?string{
+	private static function getRandomTree(Random $random, array $decorations): ?string
+	{
 		$totalWeight = 0;
-		foreach($decorations as $decoration){
+		foreach ($decorations as $decoration) {
 			$totalWeight += $decoration->getWeight();
 		}
 
-		if($totalWeight > 0){
+		if ($totalWeight > 0) {
 			$weight = $random->nextBoundedInt($totalWeight);
-			foreach($decorations as $decoration){
+			foreach ($decorations as $decoration) {
 				$weight -= $decoration->getWeight();
-				if($weight < 0){
+				if ($weight < 0) {
 					return $decoration->getClass();
 				}
 			}
@@ -42,36 +44,39 @@ class TreeDecorator extends Decorator{
 	/** @var TreeDecoration[] */
 	private $trees = [];
 
-	final public function setTrees(TreeDecoration ...$trees) : void{
+	final public function setTrees(TreeDecoration ...$trees): void
+	{
 		$this->trees = $trees;
 	}
 
-	public function populate(ChunkManager $world, Random $random, int $chunkX, int $chunkZ, Chunk $chunk) : void{
+	public function populate(ChunkManager $world, Random $random, int $chunkX, int $chunkZ, Chunk $chunk): void
+	{
 		$treeAmount = $this->amount;
-		if($random->nextBoundedInt(10) === 0){
+		if ($random->nextBoundedInt(10) === 0) {
 			++$treeAmount;
 		}
 
-		for($i = 0; $i < $treeAmount; ++$i){
+		for ($i = 0; $i < $treeAmount; ++$i) {
 			$this->decorate($world, $random, $chunkX, $chunkZ, $chunk);
 		}
 	}
 
-	public function decorate(ChunkManager $world, Random $random, int $chunkX, int $chunkZ, Chunk $chunk) : void{
+	public function decorate(ChunkManager $world, Random $random, int $chunkX, int $chunkZ, Chunk $chunk): void
+	{
 		$x = $random->nextBoundedInt(16);
 		$z = $random->nextBoundedInt(16);
 		$sourceY = $chunk->getHighestBlockAt($x, $z);
 
 		$class = self::getRandomTree($random, $this->trees);
-		if($class !== null){
+		if ($class !== null) {
 			$txn = new BlockTransaction($world);
 			/** @var GenericTree $tree */
-			try{
+			try {
 				$tree = new $class($random, $txn);
-			}catch(Exception $ex){
+			} catch (Exception $ex) {
 				$tree = new GenericTree($random, $txn);
 			}
-			if($tree->generate($world, $random, ($chunkX << 4) + $x, $sourceY, ($chunkZ << 4) + $z)){
+			if ($tree->generate($world, $random, ($chunkX << 4) + $x, $sourceY, ($chunkZ << 4) + $z)) {
 				$txn->apply();
 			}
 		}

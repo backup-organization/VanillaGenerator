@@ -6,7 +6,8 @@ namespace muqsit\vanillagenerator\generator\overworld\populator\biome\utils;
 
 use muqsit\vanillagenerator\generator\object\OreType;
 
-final class OreTypeHolder{
+final class OreTypeHolder
+{
 
 	/** @var OreType */
 	public $type;
@@ -14,7 +15,8 @@ final class OreTypeHolder{
 	/** @var int */
 	public $value;
 
-	public function __construct(OreType $type, int $value){
+	public function __construct(OreType $type, int $value)
+	{
 		$this->type = $type;
 		$this->value = $value;
 	}

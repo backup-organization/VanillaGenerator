@@ -12,7 +12,8 @@ use pocketmine\utils\Random;
 use pocketmine\world\ChunkManager;
 use pocketmine\world\format\Chunk;
 
-class LakeDecorator extends Decorator{
+class LakeDecorator extends Decorator
+{
 
 	/** @var Block */
 	private $type;
@@ -30,24 +31,26 @@ class LakeDecorator extends Decorator{
 	 * @param int $rarity
 	 * @param int $baseOffset
 	 */
-	public function __construct(Block $type, int $rarity, int $baseOffset = 0){
+	public function __construct(Block $type, int $rarity, int $baseOffset = 0)
+	{
 		$this->type = $type;
 		$this->rarity = $rarity;
 		$this->baseOffset = $baseOffset;
 	}
 
-	public function decorate(ChunkManager $world, Random $random, int $chunkX, int $chunkZ, Chunk $chunk) : void{
-		if($random->nextBoundedInt($this->rarity) === 0){
+	public function decorate(ChunkManager $world, Random $random, int $chunkX, int $chunkZ, Chunk $chunk): void
+	{
+		if ($random->nextBoundedInt($this->rarity) === 0) {
 			$sourceX = ($chunkX << 4) + $random->nextBoundedInt(16);
 			$sourceZ = ($chunkZ << 4) + $random->nextBoundedInt(16);
 			$sourceY = $random->nextBoundedInt($world->getWorldHeight() - $this->baseOffset) + $this->baseOffset;
-			if($this->type->getId() === BlockLegacyIds::STILL_LAVA && ($sourceY >= 64 || $random->nextBoundedInt(10) > 0)){
+			if ($this->type->getId() === BlockLegacyIds::STILL_LAVA && ($sourceY >= 64 || $random->nextBoundedInt(10) > 0)) {
 				return;
 			}
-			while($world->getBlockAt($sourceX, $sourceY, $sourceZ)->getId() === BlockLegacyIds::AIR && $sourceY > 5){
+			while ($world->getBlockAt($sourceX, $sourceY, $sourceZ)->getId() === BlockLegacyIds::AIR && $sourceY > 5) {
 				--$sourceY;
 			}
-			if($sourceY >= 5){
+			if ($sourceY >= 5) {
 				(new Lake($this->type))->generate($world, $random, $sourceX, $sourceY, $sourceZ);
 			}
 		}

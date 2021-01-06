@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace muqsit\vanillagenerator\generator\noise\bukkit;
 
-class PerlinNoiseGenerator extends BasePerlinNoiseGenerator{
+class PerlinNoiseGenerator extends BasePerlinNoiseGenerator
+{
 
 	/** @var PerlinNoiseGenerator|null */
 	private static $instance;
@@ -14,11 +15,13 @@ class PerlinNoiseGenerator extends BasePerlinNoiseGenerator{
 	 *
 	 * @return PerlinNoiseGenerator
 	 */
-	public static function getInstance(){
+	public static function getInstance()
+	{
 		return self::$instance ?? self::$instance = new PerlinNoiseGenerator();
 	}
 
-	public static function getNoise3d(float $x, float $y = 0.0, float $z = 0.0) : float{
+	public static function getNoise3d(float $x, float $y = 0.0, float $z = 0.0): float
+	{
 		return self::getInstance()->noise3d($x, $y, $z);
 	}
 
@@ -34,11 +37,13 @@ class PerlinNoiseGenerator extends BasePerlinNoiseGenerator{
 	 * @param float $amplitude How much to alter the amplitude by each octave
 	 * @return float resulting noise
 	 */
-	public static function getNoise(float $x, float $y, float $z, int $octaves, float $frequency, float $amplitude) : float{
+	public static function getNoise(float $x, float $y, float $z, int $octaves, float $frequency, float $amplitude): float
+	{
 		return self::getInstance()->noise($x, $y, $z, $octaves, $frequency, $amplitude);
 	}
 
-	public function noise3d(float $x, float $y = 0.0, float $z = 0.0) : float{
+	public function noise3d(float $x, float $y = 0.0, float $z = 0.0): float
+	{
 		$x += $this->offsetX;
 		$y += $this->offsetY;
 		$z += $this->offsetZ;
@@ -93,20 +98,21 @@ class PerlinNoiseGenerator extends BasePerlinNoiseGenerator{
 	 * @param bool $normalized If true, normalize the value to [-1, 1]
 	 * @return float Resulting noise
 	 */
-	public function noise(float $x, float $y, float $z, int $octaves, float $frequency, float $amplitude, bool $normalized = false) : float{
+	public function noise(float $x, float $y, float $z, int $octaves, float $frequency, float $amplitude, bool $normalized = false): float
+	{
 		$result = 0.0;
 		$amp = 1.0;
 		$freq = 1.0;
 		$max = 0.0;
 
-		for($i = 0; $i < $octaves; ++$i){
+		for ($i = 0; $i < $octaves; ++$i) {
 			$result += $this->noise3d($x * $freq, $y * $freq, $z * $freq) * $amp;
 			$max += $amp;
 			$freq *= $frequency;
 			$amp *= $amplitude;
 		}
 
-		if($normalized){
+		if ($normalized) {
 			$result /= $max;
 		}
 

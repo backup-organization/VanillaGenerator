@@ -6,7 +6,8 @@ namespace muqsit\vanillagenerator\generator\noise\bukkit;
 
 use pocketmine\utils\Random;
 
-abstract class BasePerlinNoiseGenerator extends NoiseGenerator{
+abstract class BasePerlinNoiseGenerator extends NoiseGenerator
+{
 
 	/** @var int[][] */
 	protected const GRAD3 = [
@@ -15,8 +16,9 @@ abstract class BasePerlinNoiseGenerator extends NoiseGenerator{
 		[0, 1, 1], [0, -1, 1], [0, 1, -1], [0, -1, -1]
 	];
 
-	public function __construct(?Random $rand = null){
-		if($rand === null){
+	public function __construct(?Random $rand = null)
+	{
+		if ($rand === null) {
 			static $p = [
 				151, 160, 137, 91, 90, 15, 131, 13, 201,
 				95, 96, 53, 194, 233, 7, 225, 140, 36, 103, 30, 69, 142, 8, 99, 37,
@@ -38,19 +40,19 @@ abstract class BasePerlinNoiseGenerator extends NoiseGenerator{
 				114, 67, 29, 24, 72, 243, 141, 128, 195, 78, 66, 215, 61, 156, 180
 			];
 
-			for($i = 0; $i < 512; ++$i){
+			for ($i = 0; $i < 512; ++$i) {
 				$this->perm[$i] = $p[$i & 255];
 			}
-		}else{
+		} else {
 			$this->offsetX = $rand->nextFloat() * 256;
 			$this->offsetY = $rand->nextFloat() * 256;
 			$this->offsetZ = $rand->nextFloat() * 256;
 
-			for($i = 0; $i < 256; ++$i){
+			for ($i = 0; $i < 256; ++$i) {
 				$this->perm[$i] = $rand->nextBoundedInt(256);
 			}
 
-			for($i = 0; $i < 256; ++$i){
+			for ($i = 0; $i < 256; ++$i) {
 				$pos = $rand->nextBoundedInt(256 - $i) + $i;
 				$old = $this->perm[$i];
 
@@ -61,7 +63,8 @@ abstract class BasePerlinNoiseGenerator extends NoiseGenerator{
 		}
 	}
 
-	public function noise3d(float $x, float $y = 0.0, float $z = 0.0) : float{
+	public function noise3d(float $x, float $y = 0.0, float $z = 0.0): float
+	{
 		$x += $this->offsetX;
 		$y += $this->offsetY;
 		$z += $this->offsetZ;

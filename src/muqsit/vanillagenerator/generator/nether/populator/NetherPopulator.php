@@ -14,7 +14,8 @@ use pocketmine\world\ChunkManager;
 use pocketmine\world\format\Chunk;
 use pocketmine\world\World;
 
-class NetherPopulator implements Populator{
+class NetherPopulator implements Populator
+{
 
 	/** @var Populator[] */
 	private $inGroundPopulators = [];
@@ -40,7 +41,8 @@ class NetherPopulator implements Populator{
 	/** @var MushroomDecorator */
 	private $redMushroomDecorator;
 
-	public function __construct(int $worldHeight = World::Y_MAX){
+	public function __construct(int $worldHeight = World::Y_MAX)
+	{
 		$this->orePopulator = new OrePopulator($worldHeight);
 		$this->inGroundPopulators[] = $this->orePopulator;
 
@@ -66,19 +68,22 @@ class NetherPopulator implements Populator{
 		$this->redMushroomDecorator->setAmount(1);
 	}
 
-	public function populate(ChunkManager $world, Random $random, int $chunkX, int $chunkZ, Chunk $chunk) : void{
+	public function populate(ChunkManager $world, Random $random, int $chunkX, int $chunkZ, Chunk $chunk): void
+	{
 		$this->populateInGround($world, $random, $chunkX, $chunkZ, $chunk);
 		$this->populateOnGround($world, $random, $chunkX, $chunkZ, $chunk);
 	}
 
-	private function populateInGround(ChunkManager $world, Random $random, int $chunkX, int $chunkZ, Chunk $chunk) : void{
-		foreach($this->inGroundPopulators as $populator){
+	private function populateInGround(ChunkManager $world, Random $random, int $chunkX, int $chunkZ, Chunk $chunk): void
+	{
+		foreach ($this->inGroundPopulators as $populator) {
 			$populator->populate($world, $random, $chunkX, $chunkZ, $chunk);
 		}
 	}
 
-	private function populateOnGround(ChunkManager $world, Random $random, int $chunkX, int $chunkZ, Chunk $chunk) : void{
-		foreach($this->onGroundPopulators as $populator){
+	private function populateOnGround(ChunkManager $world, Random $random, int $chunkX, int $chunkZ, Chunk $chunk): void
+	{
+		foreach ($this->onGroundPopulators as $populator) {
 			$populator->populate($world, $random, $chunkX, $chunkZ, $chunk);
 		}
 	}

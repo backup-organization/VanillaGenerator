@@ -6,7 +6,8 @@ namespace muqsit\vanillagenerator\generator\biomegrid;
 
 use muqsit\vanillagenerator\generator\overworld\biome\BiomeIds;
 
-class ShoreMapLayer extends MapLayer{
+class ShoreMapLayer extends MapLayer
+{
 
 	/** @var int[] */
 	private static $OCEANS = [BiomeIds::OCEAN => 0, BiomeIds::DEEP_OCEAN => 0];
@@ -36,12 +37,14 @@ class ShoreMapLayer extends MapLayer{
 	/** @var MapLayer */
 	private $belowLayer;
 
-	public function __construct(int $seed, MapLayer $belowLayer){
+	public function __construct(int $seed, MapLayer $belowLayer)
+	{
 		parent::__construct($seed);
 		$this->belowLayer = $belowLayer;
 	}
 
-	public function generateValues(int $x, int $z, int $sizeX, int $sizeZ) : array{
+	public function generateValues(int $x, int $z, int $sizeX, int $sizeZ): array
+	{
 		$gridX = $x - 1;
 		$gridZ = $z - 1;
 		$gridSizeX = $sizeX + 2;
@@ -49,8 +52,8 @@ class ShoreMapLayer extends MapLayer{
 		$values = $this->belowLayer->generateValues($gridX, $gridZ, $gridSizeX, $gridSizeZ);
 
 		$finalValues = [];
-		for($i = 0; $i < $sizeZ; ++$i){
-			for($j = 0; $j < $sizeX; ++$j){
+		for ($i = 0; $i < $sizeZ; ++$i) {
+			for ($j = 0; $j < $sizeX; ++$j) {
 				// This applies shores using Von Neumann neighborhood
 				// it takes a 3x3 grid with a cross shape and analyzes values as follow
 				// 0X0
@@ -64,12 +67,12 @@ class ShoreMapLayer extends MapLayer{
 				$leftVal = $values[$j + ($i + 1) * $gridSizeX];
 				$rightVal = $values[$j + 2 + ($i + 1) * $gridSizeX];
 				$centerVal = $values[$j + 1 + ($i + 1) * $gridSizeX];
-				if(!isset(self::$OCEANS[$centerVal]) && (
+				if (!isset(self::$OCEANS[$centerVal]) && (
 						isset(self::$OCEANS[$upperVal]) || isset(self::$OCEANS[$lowerVal])
 						|| isset(self::$OCEANS[$leftVal]) || isset(self::$OCEANS[$rightVal])
-					)){
+					)) {
 					$finalValues[$j + $i * $sizeX] = self::$SPECIAL_SHORES[$centerVal] ?? BiomeIds::BEACH;
-				}else{
+				} else {
 					$finalValues[$j + $i * $sizeX] = $centerVal;
 				}
 			}

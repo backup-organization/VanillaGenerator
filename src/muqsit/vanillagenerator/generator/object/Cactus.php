@@ -11,7 +11,8 @@ use pocketmine\math\Vector3;
 use pocketmine\utils\Random;
 use pocketmine\world\ChunkManager;
 
-class Cactus extends TerrainObject{
+class Cactus extends TerrainObject
+{
 
 	private const FACES = [Facing::NORTH, Facing::EAST, Facing::SOUTH, Facing::WEST];
 
@@ -25,16 +26,17 @@ class Cactus extends TerrainObject{
 	 * @param int $z
 	 * @return bool
 	 */
-	public function generate(ChunkManager $world, Random $random, int $x, int $y, int $z) : bool{
-		if($world->getBlockAt($x, $y, $z)->getId() === BlockLegacyIds::AIR){
+	public function generate(ChunkManager $world, Random $random, int $x, int $y, int $z): bool
+	{
+		if ($world->getBlockAt($x, $y, $z)->getId() === BlockLegacyIds::AIR) {
 			$height = $random->nextBoundedInt($random->nextBoundedInt(3) + 1) + 1;
-			for($n = $y; $n < $y + $height; ++$n){
+			for ($n = $y; $n < $y + $height; ++$n) {
 				$vec = new Vector3($x, $n, $z);
 				$typeBelow = $world->getBlockAt($x, $n - 1, $z)->getId();
-				if(($typeBelow === BlockLegacyIds::SAND || $typeBelow === BlockLegacyIds::CACTUS) && $world->getBlockAt($x, $n + 1, $z)->getId() === BlockLegacyIds::AIR){
-					foreach(self::FACES as $face){
+				if (($typeBelow === BlockLegacyIds::SAND || $typeBelow === BlockLegacyIds::CACTUS) && $world->getBlockAt($x, $n + 1, $z)->getId() === BlockLegacyIds::AIR) {
+					foreach (self::FACES as $face) {
 						$face = $vec->getSide($face);
-						if($world->getBlockAt($face->x, $face->y, $face->z)->isSolid()){
+						if ($world->getBlockAt($face->x, $face->y, $face->z)->isSolid()) {
 							return $n > $y;
 						}
 					}

@@ -12,7 +12,8 @@ use pocketmine\world\BlockTransaction;
 use pocketmine\world\ChunkManager;
 use pocketmine\world\World;
 
-class RedwoodTree extends GenericTree{
+class RedwoodTree extends GenericTree
+{
 
 	/** @var int */
 	protected $maxRadius;
@@ -20,7 +21,8 @@ class RedwoodTree extends GenericTree{
 	/** @var int */
 	protected $leavesHeight;
 
-	public function __construct(Random $random, BlockTransaction $transaction){
+	public function __construct(Random $random, BlockTransaction $transaction)
+	{
 		parent::__construct($random, $transaction);
 		$this->setOverridables(
 			BlockLegacyIds::AIR,
@@ -32,31 +34,34 @@ class RedwoodTree extends GenericTree{
 		$this->setType(TreeType::SPRUCE());
 	}
 
-	final protected function setMaxRadius(int $maxRadius) : void{
+	final protected function setMaxRadius(int $maxRadius): void
+	{
 		$this->maxRadius = $maxRadius;
 	}
 
-	final protected function setLeavesHeight(int $leavesHeight) : void{
+	final protected function setLeavesHeight(int $leavesHeight): void
+	{
 		$this->leavesHeight = $leavesHeight;
 	}
 
-	public function canPlace(int $baseX, int $baseY, int $baseZ, ChunkManager $world) : bool{
-		for($y = $baseY; $y <= $baseY + 1 + $this->height; ++$y){
-			if($y - $baseY < $this->leavesHeight){
+	public function canPlace(int $baseX, int $baseY, int $baseZ, ChunkManager $world): bool
+	{
+		for ($y = $baseY; $y <= $baseY + 1 + $this->height; ++$y) {
+			if ($y - $baseY < $this->leavesHeight) {
 				$radius = 0; // radius is 0 for trunk below leaves
-			}else{
+			} else {
 				$radius = $this->maxRadius;
 			}
 			// check for block collision on horizontal slices
-			for($x = $baseX - $radius; $x <= $baseX + $radius; ++$x){
-				for($z = $baseZ - $radius; $z <= $baseZ + $radius; ++$z){
-					if($y >= 0 && $y < World::Y_MAX){
+			for ($x = $baseX - $radius; $x <= $baseX + $radius; ++$x) {
+				for ($z = $baseZ - $radius; $z <= $baseZ + $radius; ++$z) {
+					if ($y >= 0 && $y < World::Y_MAX) {
 						// we can overlap some blocks around
 						$type = $world->getBlockAt($x, $y, $z)->getId();
-						if(!isset($this->overridables[$type])){
+						if (!isset($this->overridables[$type])) {
 							return false;
 						}
-					}else{ // $this->height out of range
+					} else { // $this->height out of range
 						return false;
 					}
 				}
@@ -65,8 +70,9 @@ class RedwoodTree extends GenericTree{
 		return true;
 	}
 
-	public function generate(ChunkManager $world, Random $random, int $blockX, int $blockY, int $blockZ) : bool{
-		if($this->cannotGenerateAt($blockX, $blockY, $blockZ, $world)){
+	public function generate(ChunkManager $world, Random $random, int $blockX, int $blockY, int $blockZ): bool
+	{
+		if ($this->cannotGenerateAt($blockX, $blockY, $blockZ, $world)) {
 			return false;
 		}
 
@@ -74,38 +80,38 @@ class RedwoodTree extends GenericTree{
 		$radius = $random->nextBoundedInt(2);
 		$peakRadius = 1;
 		$minRadius = 0;
-		for($y = $blockY + $this->height; $y >= $blockY + $this->leavesHeight; --$y){
+		for ($y = $blockY + $this->height; $y >= $blockY + $this->leavesHeight; --$y) {
 			// leaves are built from top to bottom
-			for($x = $blockX - $radius; $x <= $blockX + $radius; ++$x){
-				for($z = $blockZ - $radius; $z <= $blockZ + $radius; ++$z){
-					if(
+			for ($x = $blockX - $radius; $x <= $blockX + $radius; ++$x) {
+				for ($z = $blockZ - $radius; $z <= $blockZ + $radius; ++$z) {
+					if (
 						(
 							abs($x - $blockX) !== $radius ||
 							abs($z - $blockZ) !== $radius ||
 							$radius <= 0
 						) &&
 						$world->getBlockAt($x, $y, $z)->getId() === BlockLegacyIds::AIR
-					){
+					) {
 						$this->transaction->addBlockAt($x, $y, $z, $this->leavesType);
 					}
 				}
 			}
-			if($radius >= $peakRadius){
+			if ($radius >= $peakRadius) {
 				$radius = $minRadius;
 				$minRadius = 1; // after the peak $radius is reached once, the min $radius increases
 				++$peakRadius;  // the peak $radius increases each time it's reached
-				if($peakRadius > $minRadius){
+				if ($peakRadius > $minRadius) {
 					$peakRadius = $minRadius;
 				}
-			}else{
+			} else {
 				++$radius;
 			}
 		}
 
 		// generate the trunk
-		for($y = 0; $y < $this->height - $random->nextBoundedInt(3); $y++){
+		for ($y = 0; $y < $this->height - $random->nextBoundedInt(3); $y++) {
 			$type = $world->getBlockAt($blockX, $blockY + $y, $blockZ)->getId();
-			if(isset($this->overridables[$type])){
+			if (isset($this->overridables[$type])) {
 				$this->transaction->addBlockAt($blockX, $blockY + $y, $blockZ, $this->logType);
 			}
 		}

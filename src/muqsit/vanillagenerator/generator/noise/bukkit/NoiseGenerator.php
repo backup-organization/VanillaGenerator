@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace muqsit\vanillagenerator\generator\noise\bukkit;
 
-abstract class NoiseGenerator{
+abstract class NoiseGenerator
+{
 
 	/** @var int[] */
 	protected $perm = [];
@@ -18,19 +19,23 @@ abstract class NoiseGenerator{
 	/** @var float */
 	protected $offsetZ;
 
-	public static function floor(float $x) : int{
-		return $x >= 0 ? (int) $x : (int) $x - 1;
+	public static function floor(float $x): int
+	{
+		return $x >= 0 ? (int)$x : (int)$x - 1;
 	}
 
-	protected static function fade(float $x) : float{
+	protected static function fade(float $x): float
+	{
 		return $x * $x * $x * ($x * ($x * 6 - 15) + 10);
 	}
 
-	protected static function lerp(float $x, float $y, float $z) : float{
+	protected static function lerp(float $x, float $y, float $z): float
+	{
 		return $y + $x * ($z - $y);
 	}
 
-	protected static function grad(int $hash, float $x, float $y, float $z) : float{
+	protected static function grad(int $hash, float $x, float $y, float $z): float
+	{
 		$hash &= 15;
 		$u = $hash < 8 ? $x : $y;
 		$v = $hash < 4 ? $y : ($hash === 12 || $hash === 14 ? $x : $z);
@@ -45,5 +50,5 @@ abstract class NoiseGenerator{
 	 * @param float $z Z coordinate
 	 * @return float at given location, from range -1 to 1
 	 */
-	abstract public function noise3d(float $x, float $y = 0.0, float $z = 0.0) : float;
+	abstract public function noise3d(float $x, float $y = 0.0, float $z = 0.0): float;
 }

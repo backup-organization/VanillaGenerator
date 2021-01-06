@@ -8,14 +8,16 @@ use pocketmine\block\VanillaBlocks;
 use pocketmine\utils\Random;
 use pocketmine\world\ChunkManager;
 
-class DirtPatchGroundGenerator extends GroundGenerator{
+class DirtPatchGroundGenerator extends GroundGenerator
+{
 
-	public function generateTerrainColumn(ChunkManager $world, Random $random, int $x, int $z, int $biome, float $surfaceNoise) : void{
-		if($surfaceNoise > 1.75){
+	public function generateTerrainColumn(ChunkManager $world, Random $random, int $x, int $z, int $biome, float $surfaceNoise): void
+	{
+		if ($surfaceNoise > 1.75) {
 			$this->setTopMaterial(VanillaBlocks::COARSE_DIRT());
-		}elseif($surfaceNoise > -0.95){
+		} elseif ($surfaceNoise > -0.95) {
 			$this->setTopMaterial(VanillaBlocks::PODZOL());
-		}else{
+		} else {
 			$this->setTopMaterial(VanillaBlocks::GRASS());
 		}
 		$this->setGroundMaterial(VanillaBlocks::DIRT());

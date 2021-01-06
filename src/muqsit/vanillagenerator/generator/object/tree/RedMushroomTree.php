@@ -6,7 +6,8 @@ namespace muqsit\vanillagenerator\generator\object\tree;
 
 use pocketmine\block\BlockLegacyIds;
 
-class RedMushroomTree extends BrownMushroomTree{
+class RedMushroomTree extends BrownMushroomTree
+{
 
 	protected $type = BlockLegacyIds::RED_MUSHROOM_BLOCK;
 }

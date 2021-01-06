@@ -13,20 +13,23 @@ use pocketmine\utils\Random;
 use pocketmine\world\ChunkManager;
 use pocketmine\world\format\Chunk;
 
-class TallGrassDecorator extends Decorator{
+class TallGrassDecorator extends Decorator
+{
 
 	/** @var float */
 	private $fernDensity = 0.0;
 
-	final public function setFernDensity(float $fernDensity) : void{
+	final public function setFernDensity(float $fernDensity): void
+	{
 		$this->fernDensity = $fernDensity;
 	}
 
-	public function decorate(ChunkManager $world, Random $random, int $chunkX, int $chunkZ, Chunk $chunk) : void{
+	public function decorate(ChunkManager $world, Random $random, int $chunkX, int $chunkZ, Chunk $chunk): void
+	{
 		$x = $random->nextBoundedInt(16);
 		$z = $random->nextBoundedInt(16);
 		$topBlock = $chunk->getHighestBlockAt($x, $z);
-		if($topBlock <= 0){
+		if ($topBlock <= 0) {
 			// Nothing to do if this column is empty
 			return;
 		}
@@ -35,7 +38,7 @@ class TallGrassDecorator extends Decorator{
 
 		// the grass species can change on each decoration pass
 		$species = BlockLegacyMetadata::TALLGRASS_NORMAL;
-		if($this->fernDensity > 0 && $random->nextFloat() < $this->fernDensity){
+		if ($this->fernDensity > 0 && $random->nextFloat() < $this->fernDensity) {
 			$species = BlockLegacyMetadata::TALLGRASS_FERN;
 		}
 		(new TallGrass(BlockFactory::getInstance()->get(BlockLegacyIds::TALL_GRASS, $species)))->generate($world, $random, ($chunkX << 4) + $x, $sourceY, ($chunkZ << 4) + $z);

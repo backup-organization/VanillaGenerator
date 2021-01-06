@@ -15,7 +15,8 @@ use pocketmine\utils\Random;
 use pocketmine\world\ChunkManager;
 use pocketmine\world\format\Chunk;
 
-class SwamplandPopulator extends BiomePopulator{
+class SwamplandPopulator extends BiomePopulator
+{
 
 	/** @var TreeDecoration[] */
 	protected static $TREES;
@@ -23,13 +24,15 @@ class SwamplandPopulator extends BiomePopulator{
 	/** @var FlowerDecoration[] */
 	protected static $FLOWERS;
 
-	protected static function initTrees() : void{
+	protected static function initTrees(): void
+	{
 		self::$TREES = [
 			new TreeDecoration(SwampTree::class, 1)
 		];
 	}
 
-	protected static function initFlowers() : void{
+	protected static function initFlowers(): void
+	{
 		self::$FLOWERS = [
 			new FlowerDecoration(VanillaBlocks::BLUE_ORCHID(), 1)
 		];
@@ -44,14 +47,16 @@ class SwamplandPopulator extends BiomePopulator{
 	/** @var WaterLilyDecorator */
 	private $waterlilyDecorator;
 
-	public function __construct(){
+	public function __construct()
+	{
 		$this->swamplandBrownMushroomDecorator = new MushroomDecorator(VanillaBlocks::BROWN_MUSHROOM());
 		$this->swamplandRedMushroomDecorator = new MushroomDecorator(VanillaBlocks::RED_MUSHROOM());
 		$this->waterlilyDecorator = new WaterLilyDecorator();
 		parent::__construct();
 	}
 
-	protected function initPopulators() : void{
+	protected function initPopulators(): void
+	{
 		$this->sandPatchDecorator->setAmount(0);
 		$this->gravelPatchDecorator->setAmount(0);
 		$this->treeDecorator->setAmount(2);
@@ -66,11 +71,13 @@ class SwamplandPopulator extends BiomePopulator{
 		$this->waterlilyDecorator->setAmount(4);
 	}
 
-	public function getBiomes() : ?array{
+	public function getBiomes(): ?array
+	{
 		return [BiomeIds::SWAMPLAND, BiomeIds::MUTATED_SWAMPLAND];
 	}
 
-	protected function populateOnGround(ChunkManager $world, Random $random, int $chunkX, int $chunkZ, Chunk $chunk) : void{
+	protected function populateOnGround(ChunkManager $world, Random $random, int $chunkX, int $chunkZ, Chunk $chunk): void
+	{
 		parent::populateOnGround($world, $random, $chunkX, $chunkZ, $chunk);
 		$this->swamplandBrownMushroomDecorator->populate($world, $random, $chunkX, $chunkZ, $chunk);
 		$this->swamplandRedMushroomDecorator->populate($world, $random, $chunkX, $chunkZ, $chunk);

@@ -12,14 +12,16 @@ use muqsit\vanillagenerator\generator\object\tree\RedMushroomTree;
 use muqsit\vanillagenerator\generator\overworld\biome\BiomeIds;
 use muqsit\vanillagenerator\generator\overworld\decorator\types\TreeDecoration;
 
-class RoofedForestPopulator extends ForestPopulator{
+class RoofedForestPopulator extends ForestPopulator
+{
 
 	private const BIOMES = [BiomeIds::ROOFED_FOREST, BiomeIds::MUTATED_ROOFED_FOREST];
 
 	/** @var TreeDecoration[] */
 	protected static $TREES;
 
-	protected static function initTrees() : void{
+	protected static function initTrees(): void
+	{
 		self::$TREES = [
 			new TreeDecoration(GenericTree::class, 20),
 			new TreeDecoration(BirchTree::class, 5),
@@ -29,13 +31,15 @@ class RoofedForestPopulator extends ForestPopulator{
 		];
 	}
 
-	protected function initPopulators() : void{
+	protected function initPopulators(): void
+	{
 		$this->treeDecorator->setAmount(50);
 		$this->treeDecorator->setTrees(...self::$TREES);
 		$this->tallGrassDecorator->setAmount(4);
 	}
 
-	public function getBiomes() : ?array{
+	public function getBiomes(): ?array
+	{
 		return self::BIOMES;
 	}
 }

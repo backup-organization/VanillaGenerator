@@ -8,7 +8,8 @@ use pocketmine\block\Block;
 use pocketmine\utils\Random;
 use pocketmine\world\ChunkManager;
 
-class OreVein extends TerrainObject{
+class OreVein extends TerrainObject
+{
 
 	/**
 	 * The square of the percentage of the radius that is the distance between the given block's
@@ -20,7 +21,8 @@ class OreVein extends TerrainObject{
 	 * @param int $x the raw coordinate
 	 * @return float the square of the normalized coordinate
 	 */
-	protected static function normalizedSquaredCoordinate(float $origin, float $radius, int $x) : float{
+	protected static function normalizedSquaredCoordinate(float $origin, float $radius, int $x): float
+	{
 		$squaredNormalizedX = ($x + 0.5 - $origin) / $radius;
 		$squaredNormalizedX *= $squaredNormalizedX;
 		return $squaredNormalizedX;
@@ -40,13 +42,15 @@ class OreVein extends TerrainObject{
 	 *
 	 * @param OreType $oreType the ore type
 	 */
-	public function __construct(OreType $oreType){
+	public function __construct(OreType $oreType)
+	{
 		$this->type = $oreType->getType();
 		$this->amount = $oreType->getAmount();
 		$this->targetType = $oreType->getTargetType();
 	}
 
-	public function generate(ChunkManager $world, Random $random, int $sourceX, int $sourceY, int $sourceZ) : bool{
+	public function generate(ChunkManager $world, Random $random, int $sourceX, int $sourceY, int $sourceZ): bool
+	{
 		$angle = $random->nextFloat() * M_PI;
 		$dx1 = $sourceX + sin($angle) * $this->amount / 8.0;
 		$dx2 = $sourceX - sin($angle) * $this->amount / 8.0;
@@ -55,7 +59,7 @@ class OreVein extends TerrainObject{
 		$dy1 = $sourceY + $random->nextBoundedInt(3) - 2;
 		$dy2 = $sourceY + $random->nextBoundedInt(3) - 2;
 		$succeeded = false;
-		for($i = 0; $i < $this->amount; ++$i){
+		for ($i = 0; $i < $this->amount; ++$i) {
 			$originX = $dx1 + ($dx2 - $dx1) * $i / $this->amount;
 			$originY = $dy1 + ($dy2 - $dy1) * $i / $this->amount;
 			$originZ = $dz1 + ($dz2 - $dz1) * $i / $this->amount;
@@ -63,29 +67,29 @@ class OreVein extends TerrainObject{
 			$radiusH = (sin($i * M_PI / $this->amount) + 1 * $q + 1) / 2.0;
 			$radiusV = (sin($i * M_PI / $this->amount) + 1 * $q + 1) / 2.0;
 
-			$min_x = (int) ($originX - $radiusH);
-			$max_x = (int) ($originX + $radiusH);
+			$min_x = (int)($originX - $radiusH);
+			$max_x = (int)($originX + $radiusH);
 
-			$min_y = (int) ($originY - $radiusV);
-			$max_y = (int) ($originY + $radiusV);
+			$min_y = (int)($originY - $radiusV);
+			$max_y = (int)($originY + $radiusV);
 
-			$min_z = (int) ($originZ - $radiusH);
-			$max_z = (int) ($originZ + $radiusH);
+			$min_z = (int)($originZ - $radiusH);
+			$max_z = (int)($originZ + $radiusH);
 
-			for($x = $min_x; $x <= $max_x; ++$x){
+			for ($x = $min_x; $x <= $max_x; ++$x) {
 				// scale the center of x to the range [-1, 1] within the circle
 				$squaredNormalizedX = self::normalizedSquaredCoordinate($originX, $radiusH, $x);
-				if($squaredNormalizedX >= 1){
+				if ($squaredNormalizedX >= 1) {
 					continue;
 				}
-				for($y = $min_y; $y <= $max_y; ++$y){
+				for ($y = $min_y; $y <= $max_y; ++$y) {
 					$squaredNormalizedY = self::normalizedSquaredCoordinate($originY, $radiusV, $y);
-					if($squaredNormalizedX + $squaredNormalizedY >= 1){
+					if ($squaredNormalizedX + $squaredNormalizedY >= 1) {
 						continue;
 					}
-					for($z = $min_z; $z <= $max_z; ++$z){
+					for ($z = $min_z; $z <= $max_z; ++$z) {
 						$squaredNormalizedZ = self::normalizedSquaredCoordinate($originZ, $radiusH, $z);
-						if($squaredNormalizedX + $squaredNormalizedY + $squaredNormalizedZ < 1 && $world->getBlockAt($x, $y, $z)->getId() === $this->targetType){
+						if ($squaredNormalizedX + $squaredNormalizedY + $squaredNormalizedZ < 1 && $world->getBlockAt($x, $y, $z)->getId() === $this->targetType) {
 							$world->setBlockAt($x, $y, $z, $this->type);
 							$succeeded = true;
 						}

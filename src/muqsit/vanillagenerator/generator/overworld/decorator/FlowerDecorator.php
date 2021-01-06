@@ -12,24 +12,26 @@ use pocketmine\utils\Random;
 use pocketmine\world\ChunkManager;
 use pocketmine\world\format\Chunk;
 
-class FlowerDecorator extends Decorator{
+class FlowerDecorator extends Decorator
+{
 
 	/**
 	 * @param Random $random
 	 * @param FlowerDecoration[] $decorations
 	 * @return Block|null
 	 */
-	private static function getRandomFlower(Random $random, array $decorations) : ?Block{
+	private static function getRandomFlower(Random $random, array $decorations): ?Block
+	{
 		$totalWeight = 0;
-		foreach($decorations as $decoration){
+		foreach ($decorations as $decoration) {
 			$totalWeight += $decoration->getWeight();
 		}
 
-		if($totalWeight > 0){
+		if ($totalWeight > 0) {
 			$weight = $random->nextBoundedInt($totalWeight);
-			foreach($decorations as $decoration){
+			foreach ($decorations as $decoration) {
 				$weight -= $decoration->getWeight();
-				if($weight < 0){
+				if ($weight < 0) {
 					return $decoration->getBlock();
 				}
 			}
@@ -41,18 +43,20 @@ class FlowerDecorator extends Decorator{
 	/** @var FlowerDecoration[] */
 	private $flowers = [];
 
-	final public function setFlowers(FlowerDecoration ...$flowers) : void{
+	final public function setFlowers(FlowerDecoration ...$flowers): void
+	{
 		$this->flowers = $flowers;
 	}
 
-	public function decorate(ChunkManager $world, Random $random, int $chunkX, int $chunkZ, Chunk $chunk) : void{
+	public function decorate(ChunkManager $world, Random $random, int $chunkX, int $chunkZ, Chunk $chunk): void
+	{
 		$x = $random->nextBoundedInt(16);
 		$z = $random->nextBoundedInt(16);
 		$sourceY = $random->nextBoundedInt($chunk->getHighestBlockAt($x & 0x0f, $z & 0x0f) + 32);
 
 		// the flower can change on each decoration pass
 		$flower = self::getRandomFlower($random, $this->flowers);
-		if($flower !== null){
+		if ($flower !== null) {
 			(new Flower($flower))->generate($world, $random, ($chunkX << 4) + $x, $sourceY, ($chunkZ << 4) + $z);
 		}
 	}

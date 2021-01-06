@@ -16,54 +16,59 @@ use pocketmine\world\ChunkManager;
 use pocketmine\world\format\Chunk;
 use pocketmine\world\World;
 
-class SwampTree extends CocoaTree{
+class SwampTree extends CocoaTree
+{
 
 	/** @var Set<int> */
 	private static $WATER_BLOCK_TYPES;
 
-	public static function init() : void{
+	public static function init(): void
+	{
 		self::$WATER_BLOCK_TYPES = new Set([BlockLegacyIds::WATER, BlockLegacyIds::STILL_WATER]);
 	}
 
-	public function __construct(Random $random, BlockTransaction $transaction){
+	public function __construct(Random $random, BlockTransaction $transaction)
+	{
 		parent::__construct($random, $transaction);
 		$this->setOverridables(BlockLegacyIds::AIR, BlockLegacyIds::LEAVES);
 		$this->setHeight($random->nextBoundedInt(4) + 5);
 		$this->setType(TreeType::OAK());
 	}
 
-	public function canPlaceOn(Block $soil) : bool{
+	public function canPlaceOn(Block $soil): bool
+	{
 		$id = $soil->getId();
 		return $id === BlockLegacyIds::GRASS || $id === BlockLegacyIds::DIRT;
 	}
 
-	public function canPlace(int $baseX, int $baseY, int $baseZ, ChunkManager $world) : bool{
-		for($y = $baseY; $y <= $baseY + 1 + $this->height; ++$y){
-			if($y < 0 || $y >= World::Y_MAX){ // height out of range
+	public function canPlace(int $baseX, int $baseY, int $baseZ, ChunkManager $world): bool
+	{
+		for ($y = $baseY; $y <= $baseY + 1 + $this->height; ++$y) {
+			if ($y < 0 || $y >= World::Y_MAX) { // height out of range
 				return false;
 			}
 
 			// Space requirement
 			$radius = 1; // default radius if above first block
-			if($y === $baseY){
+			if ($y === $baseY) {
 				$radius = 0; // radius at source block y is 0 (only trunk)
-			}elseif($y >= $baseY + 1 + $this->height - 2){
+			} elseif ($y >= $baseY + 1 + $this->height - 2) {
 				$radius = 3; // max radius starting at leaves bottom
 			}
 			// check for block collision on horizontal slices
-			for($x = $baseX - $radius; $x <= $baseX + $radius; ++$x){
-				for($z = $baseZ - $radius; $z <= $baseZ + $radius; ++$z){
+			for ($x = $baseX - $radius; $x <= $baseX + $radius; ++$x) {
+				for ($z = $baseZ - $radius; $z <= $baseZ + $radius; ++$z) {
 					// we can overlap some blocks around
 					$type = $world->getBlockAt($x, $y, $z)->getId();
-					if(isset($this->overridables[$type])){
+					if (isset($this->overridables[$type])) {
 						continue;
 					}
 
-					if($type === BlockLegacyIds::WATER || $type === BlockLegacyIds::STILL_WATER){
-						if($y > $baseY){
+					if ($type === BlockLegacyIds::WATER || $type === BlockLegacyIds::STILL_WATER) {
+						if ($y > $baseY) {
 							return false;
 						}
-					}else{
+					} else {
 						return false;
 					}
 				}
@@ -72,31 +77,32 @@ class SwampTree extends CocoaTree{
 		return true;
 	}
 
-	public function generate(ChunkManager $world, Random $random, int $blockX, int $blockY, int $blockZ) : bool{
+	public function generate(ChunkManager $world, Random $random, int $blockX, int $blockY, int $blockZ): bool
+	{
 		/** @var Chunk $chunk */
 		$chunk = $world->getChunk($blockX >> 4, $blockZ >> 4);
 		$chunk_block_x = $blockX & 0x0f;
 		$chunk_block_z = $blockZ & 0x0f;
 		$block_factory = BlockFactory::getInstance();
-		while(self::$WATER_BLOCK_TYPES->contains($block_factory->fromFullBlock($chunk->getFullBlock($chunk_block_x, $blockY, $chunk_block_z))->getId())){
+		while (self::$WATER_BLOCK_TYPES->contains($block_factory->fromFullBlock($chunk->getFullBlock($chunk_block_x, $blockY, $chunk_block_z))->getId())) {
 			--$blockY;
 		}
 
-		if($this->cannotGenerateAt($blockX, $blockY, $blockZ, $world)){
+		if ($this->cannotGenerateAt($blockX, $blockY, $blockZ, $world)) {
 			return false;
 		}
 
 		// generate the leaves
-		for($y = $blockY + $this->height - 3; $y <= $blockY + $this->height; ++$y){
+		for ($y = $blockY + $this->height - 3; $y <= $blockY + $this->height; ++$y) {
 			$n = $y - ($blockY + $this->height);
-			$radius = (int) (2 - $n / 2);
-			for($x = $blockX - $radius; $x <= $blockX + $radius; ++$x){
-				for($z = $blockZ - $radius; $z <= $blockZ + $radius; ++$z){
-					if(
+			$radius = (int)(2 - $n / 2);
+			for ($x = $blockX - $radius; $x <= $blockX + $radius; ++$x) {
+				for ($z = $blockZ - $radius; $z <= $blockZ + $radius; ++$z) {
+					if (
 						abs($x - $blockX) !== $radius ||
 						abs($z - $blockZ) !== $radius ||
 						($random->nextBoolean() && $n !== 0)
-					){
+					) {
 						$this->replaceIfAirOrLeaves($x, $y, $z, $this->leavesType, $world);
 					}
 				}
@@ -104,14 +110,14 @@ class SwampTree extends CocoaTree{
 		}
 
 		// generate the trunk
-		for($y = 0; $y < $this->height; ++$y){
+		for ($y = 0; $y < $this->height; ++$y) {
 			$material = $block_factory->fromFullBlock($chunk->getFullBlock($chunk_block_x, $blockY + $y, $chunk_block_z))->getId();
-			if(
+			if (
 				$material === BlockLegacyIds::AIR ||
 				$material === BlockLegacyIds::LEAVES ||
 				$material === BlockLegacyIds::WATER ||
 				$material === BlockLegacyIds::STILL_WATER
-			){
+			) {
 				$this->transaction->addBlockAt($blockX, $blockY + $y, $blockZ, $this->logType);
 			}
 		}

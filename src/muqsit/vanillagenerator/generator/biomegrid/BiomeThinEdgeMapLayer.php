@@ -7,7 +7,8 @@ namespace muqsit\vanillagenerator\generator\biomegrid;
 use muqsit\vanillagenerator\generator\biomegrid\utils\BiomeEdgeEntry;
 use muqsit\vanillagenerator\generator\overworld\biome\BiomeIds;
 
-class BiomeThinEdgeMapLayer extends MapLayer{
+class BiomeThinEdgeMapLayer extends MapLayer
+{
 
 	/** @var int[] */
 	private static $OCEANS = [BiomeIds::OCEAN, BiomeIds::DEEP_OCEAN];
@@ -33,7 +34,8 @@ class BiomeThinEdgeMapLayer extends MapLayer{
 	/** @var BiomeEdgeEntry[] */
 	private static $EDGES;
 
-	public static function init() : void{
+	public static function init(): void
+	{
 		self::$OCEANS = array_flip(self::$OCEANS);
 		self::$EDGES = [
 			new BiomeEdgeEntry(self::$MESA_EDGES),
@@ -44,12 +46,14 @@ class BiomeThinEdgeMapLayer extends MapLayer{
 	/** @var MapLayer */
 	private $belowLayer;
 
-	public function __construct(int $seed, MapLayer $belowLayer){
+	public function __construct(int $seed, MapLayer $belowLayer)
+	{
 		parent::__construct($seed);
 		$this->belowLayer = $belowLayer;
 	}
 
-	public function generateValues(int $x, int $z, int $sizeX, int $sizeZ) : array{
+	public function generateValues(int $x, int $z, int $sizeX, int $sizeZ): array
+	{
 		$gridX = $x - 1;
 		$gridZ = $z - 1;
 		$gridSizeX = $sizeX + 2;
@@ -57,32 +61,32 @@ class BiomeThinEdgeMapLayer extends MapLayer{
 		$values = $this->belowLayer->generateValues($gridX, $gridZ, $gridSizeX, $gridSizeZ);
 
 		$finalValues = [];
-		for($i = 0; $i < $sizeZ; ++$i){
-			for($j = 0; $j < $sizeX; ++$j){
+		for ($i = 0; $i < $sizeZ; ++$i) {
+			for ($j = 0; $j < $sizeX; ++$j) {
 				// This applies biome thin edges using Von Neumann neighborhood
 				$centerVal = $values[$j + 1 + ($i + 1) * $gridSizeX];
 				$val = $centerVal;
-				foreach(self::$EDGES as $edge){
-					if(isset($edge->key[$centerVal])){
+				foreach (self::$EDGES as $edge) {
+					if (isset($edge->key[$centerVal])) {
 						$upperVal = $values[$j + 1 + $i * $gridSizeX];
 						$lowerVal = $values[$j + 1 + ($i + 2) * $gridSizeX];
 						$leftVal = $values[$j + ($i + 1) * $gridSizeX];
 						$rightVal = $values[$j + 2 + ($i + 1) * $gridSizeX];
-						if($edge->value === null && (
-							(!isset(self::$OCEANS[$upperVal]) && !isset($edge->key[$upperVal]))
-							|| (!isset(self::$OCEANS[$lowerVal]) && !isset($edge->key[$lowerVal]))
-							|| (!isset(self::$OCEANS[$leftVal]) && !isset($edge->key[$leftVal]))
-							|| (!isset(self::$OCEANS[$rightVal]) && !isset($edge->key[$rightVal]))
-						)){
+						if ($edge->value === null && (
+								(!isset(self::$OCEANS[$upperVal]) && !isset($edge->key[$upperVal]))
+								|| (!isset(self::$OCEANS[$lowerVal]) && !isset($edge->key[$lowerVal]))
+								|| (!isset(self::$OCEANS[$leftVal]) && !isset($edge->key[$leftVal]))
+								|| (!isset(self::$OCEANS[$rightVal]) && !isset($edge->key[$rightVal]))
+							)) {
 							$val = $edge->key[$centerVal];
 							break;
 						}
-						if($edge->value !== null && (
-							(!isset(self::$OCEANS[$upperVal]) && !$edge->value->contains($upperVal))
-							|| (!isset(self::$OCEANS[$lowerVal]) && !$edge->value->contains($lowerVal))
-							|| (!isset(self::$OCEANS[$leftVal]) && !$edge->value->contains($leftVal))
-							|| (!isset(self::$OCEANS[$rightVal]) && !$edge->value->contains($rightVal))
-						)){
+						if ($edge->value !== null && (
+								(!isset(self::$OCEANS[$upperVal]) && !$edge->value->contains($upperVal))
+								|| (!isset(self::$OCEANS[$lowerVal]) && !$edge->value->contains($lowerVal))
+								|| (!isset(self::$OCEANS[$leftVal]) && !$edge->value->contains($leftVal))
+								|| (!isset(self::$OCEANS[$rightVal]) && !$edge->value->contains($rightVal))
+							)) {
 							$val = $edge->key[$centerVal];
 							break;
 						}

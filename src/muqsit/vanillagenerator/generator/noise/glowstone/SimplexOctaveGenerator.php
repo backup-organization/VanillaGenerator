@@ -6,17 +6,19 @@ namespace muqsit\vanillagenerator\generator\noise\glowstone;
 
 use pocketmine\utils\Random;
 
-class SimplexOctaveGenerator extends PerlinOctaveGenerator{
+class SimplexOctaveGenerator extends PerlinOctaveGenerator
+{
 
 	/**
 	 * @param Random $rand
 	 * @param int $octaves
 	 * @return SimplexNoise[]
 	 */
-	protected static function createOctaves(Random $rand, int $octaves) : array{
+	protected static function createOctaves(Random $rand, int $octaves): array
+	{
 		$result = [];
 
-		for($i = 0; $i < $octaves; ++$i){
+		for ($i = 0; $i < $octaves; ++$i) {
 			$result[$i] = new SimplexNoise($rand);
 		}
 
@@ -31,11 +33,13 @@ class SimplexOctaveGenerator extends PerlinOctaveGenerator{
 	 * @param int $sizeZ
 	 * @return SimplexOctaveGenerator
 	 */
-	public static function fromRandomAndOctaves(Random $random, int $octaves, int $sizeX, int $sizeY, int $sizeZ){
+	public static function fromRandomAndOctaves(Random $random, int $octaves, int $sizeX, int $sizeY, int $sizeZ)
+	{
 		return new SimplexOctaveGenerator(self::createOctaves($random, $octaves), $random, $sizeX, $sizeY, $sizeZ);
 	}
 
-	public function getFractalBrownianMotion(float $x, float $y, float $z, float $lacunarity, float $persistence) : array{
+	public function getFractalBrownianMotion(float $x, float $y, float $z, float $lacunarity, float $persistence): array
+	{
 		$this->noise = array_fill(0, $this->sizeX * $this->sizeY * $this->sizeZ, 0.0);
 
 		$freq = 1.0;
@@ -43,7 +47,7 @@ class SimplexOctaveGenerator extends PerlinOctaveGenerator{
 
 		// fBm
 		/** @var SimplexNoise $octave */
-		foreach($this->octaves as $octave){
+		foreach ($this->octaves as $octave) {
 			$this->noise = $octave->getNoise($this->noise, $x, $y, $z, $this->sizeX, $this->sizeY, $this->sizeZ, $this->xScale * $freq, $this->yScale * $freq, $this->zScale * $freq, 0.55 / $amp);
 			$freq *= $lacunarity;
 			$amp *= $persistence;

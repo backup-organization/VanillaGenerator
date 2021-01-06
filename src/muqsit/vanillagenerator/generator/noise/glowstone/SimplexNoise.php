@@ -6,7 +6,8 @@ namespace muqsit\vanillagenerator\generator\noise\glowstone;
 
 use pocketmine\utils\Random;
 
-class SimplexNoise extends PerlinNoise{
+class SimplexNoise extends PerlinNoise
+{
 
 	protected const SQRT_3 = 1.7320508075688772;
 	protected const F2 = 0.5 * (self::SQRT_3 - 1);
@@ -23,7 +24,8 @@ class SimplexNoise extends PerlinNoise{
 	/** @var int[] */
 	protected $permMod12 = [];
 
-	public static function init() : void{
+	public static function init(): void
+	{
 		self::$grad3 = [
 			new Grad(1, 1, 0), new Grad(-1, 1, 0), new Grad(1, -1, 0),
 			new Grad(-1, -1, 0),
@@ -37,18 +39,21 @@ class SimplexNoise extends PerlinNoise{
 	 *
 	 * @param Random $rand the PRNG to use
 	 */
-	public function __construct(Random $rand){
+	public function __construct(Random $rand)
+	{
 		parent::__construct($rand);
-		for($i = 0; $i < 512; ++$i){
+		for ($i = 0; $i < 512; ++$i) {
 			$this->permMod12[$i] = $this->perm[$i] % 12;
 		}
 	}
 
-	public static function floor(float $x) : int{
-		return $x > 0 ? (int) $x : (int) $x - 1;
+	public static function floor(float $x): int
+	{
+		return $x > 0 ? (int)$x : (int)$x - 1;
 	}
 
-	protected static function dot(Grad $g, float $x, float $y, float $z = 0.0) : float{
+	protected static function dot(Grad $g, float $x, float $y, float $z = 0.0): float
+	{
 		return $g->x * $x + $g->y * $y + $g->z * $z;
 	}
 
@@ -63,11 +68,12 @@ class SimplexNoise extends PerlinNoise{
 	 * @param float $amplitude
 	 * @return float[]
 	 */
-	protected function get2dNoise(array &$noise, float $x, float $z, int $sizeX, int $sizeY, float $scaleX, float $scaleY, float $amplitude) : array{
+	protected function get2dNoise(array &$noise, float $x, float $z, int $sizeX, int $sizeY, float $scaleX, float $scaleY, float $amplitude): array
+	{
 		$index = -1;
-		for($i = 0; $i < $sizeY; ++$i){
+		for ($i = 0; $i < $sizeY; ++$i) {
 			$zin = $this->offsetY + ($z + $i) * $scaleY;
-			for($j = 0; $j < $sizeX; ++$j){
+			for ($j = 0; $j < $sizeX; ++$j) {
 				$xin = $this->offsetX + ($x + $j) * $scaleX;
 				$noise[++$index] += $this->simplex2D($xin, $zin) * $amplitude;
 			}
@@ -89,13 +95,14 @@ class SimplexNoise extends PerlinNoise{
 	 * @param float $amplitude
 	 * @return float[]
 	 */
-	protected function get3dNoise(array &$noise, float $x, float $y, float $z, int $sizeX, int $sizeY, int $sizeZ, float $scaleX, float $scaleY, float $scaleZ, float $amplitude) : array{
+	protected function get3dNoise(array &$noise, float $x, float $y, float $z, int $sizeX, int $sizeY, int $sizeZ, float $scaleX, float $scaleY, float $scaleZ, float $amplitude): array
+	{
 		$index = -1;
-		for($i = 0; $i < $sizeZ; ++$i){
+		for ($i = 0; $i < $sizeZ; ++$i) {
 			$zin = $this->offsetZ + ($z + $i) * $scaleZ;
-			for($j = 0; $j < $sizeX; ++$j){
+			for ($j = 0; $j < $sizeX; ++$j) {
 				$xin = $this->offsetX + ($x + $j) * $scaleX;
-				for($k = 0; $k < $sizeY; ++$k){
+				for ($k = 0; $k < $sizeY; ++$k) {
 					$yin = $this->offsetY + ($y + $k) * $scaleY;
 					$noise[++$index] += $this->simplex3D($xin, $yin, $zin) * $amplitude;
 				}
@@ -104,14 +111,15 @@ class SimplexNoise extends PerlinNoise{
 		return $noise;
 	}
 
-	public function noise3d(float $xin, float $yin = 0.0, float $zin = 0.0) : float{
-		if($yin === 0.0){
+	public function noise3d(float $xin, float $yin = 0.0, float $zin = 0.0): float
+	{
+		if ($yin === 0.0) {
 			return parent::noise3d($xin, $yin, $zin);
 		}
 
 		$xin += $this->offsetX;
 		$yin += $this->offsetY;
-		if($xin === 0.0){
+		if ($xin === 0.0) {
 			return $this->simplex2D($xin, $yin);
 		}
 
@@ -119,7 +127,8 @@ class SimplexNoise extends PerlinNoise{
 		return $this->simplex3D($xin, $yin, $zin);
 	}
 
-	private function simplex2D(float $xin, float $yin) : float{
+	private function simplex2D(float $xin, float $yin): float
+	{
 		// Skew the input space to determine which simplex cell we're in
 		$s = ($xin + $yin) * self::F2; // Hairy factor for 2D
 		$i = self::floor($xin + $s);
@@ -135,10 +144,10 @@ class SimplexNoise extends PerlinNoise{
 		// Determine which simplex we are in.
 		$i1 = 0; // Offsets for second (middle) corner of simplex in (i,j) coords
 		$j1 = 0;
-		if($x0 > $y0){
+		if ($x0 > $y0) {
 			$i1 = 1; // lower triangle, XY order: (0,0)->(1,0)->(1,1)
 			$j1 = 0;
-		}else{
+		} else {
 			$i1 = 0; // upper triangle, YX order: (0,0)->(0,1)->(1,1)
 			$j1 = 1;
 		}
@@ -162,27 +171,27 @@ class SimplexNoise extends PerlinNoise{
 		// Calculate the contribution from the three corners
 		$t0 = 0.5 - $x0 * $x0 - $y0 * $y0;
 		$n0 = 0.0;
-		if($t0 < 0){
+		if ($t0 < 0) {
 			$n0 = 0.0;
-		}else{
+		} else {
 			$t0 *= $t0;
 			$n0 = $t0 * $t0 * self::dot(self::$grad3[$gi0], $x0, $y0); // (x,y) of grad3 used for 2D gradient
 		}
 
 		$t1 = 0.5 - $x1 * $x1 - $y1 * $y1;
 		$n1 = 0.0;
-		if($t1 < 0){
+		if ($t1 < 0) {
 			$n1 = 0.0;
-		}else{
+		} else {
 			$t1 *= $t1;
 			$n1 = $t1 * $t1 * self::dot(self::$grad3[$gi1], $x1, $y1);
 		}
 
 		$t2 = 0.5 - $x2 * $x2 - $y2 * $y2;
 		$n2 = 0;
-		if($t2 < 0){
+		if ($t2 < 0) {
 			$n2 = 0.0;
-		}else{
+		} else {
 			$t2 *= $t2;
 			$n2 = $t2 * $t2 * self::dot(self::$grad3[$gi2], $x2, $y2);
 		}
@@ -192,7 +201,8 @@ class SimplexNoise extends PerlinNoise{
 		return 70.0 * ($n0 + $n1 + $n2);
 	}
 
-	private function simplex3D(float $xin, float $yin, float $zin) : float{
+	private function simplex3D(float $xin, float $yin, float $zin): float
+	{
 		// Skew the input space to determine which simplex cell we're in
 		$s = ($xin + $yin + $zin) * self::F3; // Very nice and simple skew factor for 3D
 		$i = self::floor($xin + $s);
@@ -216,22 +226,22 @@ class SimplexNoise extends PerlinNoise{
 		$y0 = $yin - $dy0;
 		$z0 = $zin - $dz0;
 		// Determine which simplex we are in
-		if($x0 >= $y0){
-			if($y0 >= $z0){
+		if ($x0 >= $y0) {
+			if ($y0 >= $z0) {
 				$i1 = 1; // X Y Z order
 				$j1 = 0;
 				$k1 = 0;
 				$i2 = 1;
 				$j2 = 1;
 				$k2 = 0;
-			}elseif($x0 >= $z0){
+			} elseif ($x0 >= $z0) {
 				$i1 = 1; // X Z Y order
 				$j1 = 0;
 				$k1 = 0;
 				$i2 = 1;
 				$j2 = 0;
 				$k2 = 1;
-			}else{
+			} else {
 				$i1 = 0; // Z X Y order
 				$j1 = 0;
 				$k1 = 1;
@@ -239,22 +249,22 @@ class SimplexNoise extends PerlinNoise{
 				$j2 = 0;
 				$k2 = 1;
 			}
-		}else{ // x0<y0
-			if($y0 < $z0){
+		} else { // x0<y0
+			if ($y0 < $z0) {
 				$i1 = 0; // Z Y X order
 				$j1 = 0;
 				$k1 = 1;
 				$i2 = 0;
 				$j2 = 1;
 				$k2 = 1;
-			}elseif($x0 < $z0){
+			} elseif ($x0 < $z0) {
 				$i1 = 0; // Y Z X order
 				$j1 = 1;
 				$k1 = 0;
 				$i2 = 0;
 				$j2 = 1;
 				$k2 = 1;
-			}else{
+			} else {
 				$i1 = 0; // Y X Z order
 				$j1 = 1;
 				$k1 = 0;
@@ -287,27 +297,27 @@ class SimplexNoise extends PerlinNoise{
 		// Calculate the contribution from the four corners
 		$t0 = 0.5 - $x0 * $x0 - $y0 * $y0 - $z0 * $z0;
 		$n0 = 0.0; // Noise contributions from the four corners
-		if($t0 < 0){
+		if ($t0 < 0) {
 			$n0 = 0.0;
-		}else{
+		} else {
 			$t0 *= $t0;
 			$n0 = $t0 * $t0 * self::dot(self::$grad3[$gi0], $x0, $y0, $z0);
 		}
 
 		$t1 = 0.5 - $x1 * $x1 - $y1 * $y1 - $z1 * $z1;
 		$n1 = 0.0;
-		if($t1 < 0){
+		if ($t1 < 0) {
 			$n1 = 0.0;
-		}else{
+		} else {
 			$t1 *= $t1;
 			$n1 = $t1 * $t1 * self::dot(self::$grad3[$gi1], $x1, $y1, $z1);
 		}
 
 		$t2 = 0.5 - $x2 * $x2 - $y2 * $y2 - $z2 * $z2;
 		$n2 = 0.0;
-		if($t2 < 0){
+		if ($t2 < 0) {
 			$n2 = 0.0;
-		}else{
+		} else {
 			$t2 *= $t2;
 			$n2 = $t2 * $t2 * self::dot(self::$grad3[$gi2], $x2, $y2, $z2);
 		}
@@ -317,9 +327,9 @@ class SimplexNoise extends PerlinNoise{
 		$z3 = $z0 + self::G33;
 		$t3 = 0.5 - $x3 * $x3 - $y3 * $y3 - $z3 * $z3;
 		$n3 = 0.0;
-		if($t3 < 0){
+		if ($t3 < 0) {
 			$n3 = 0.0;
-		}else{
+		} else {
 			$t3 *= $t3;
 			$n3 = $t3 * $t3 * self::dot(self::$grad3[$gi3], $x3, $y3, $z3);
 		}
@@ -332,7 +342,8 @@ class SimplexNoise extends PerlinNoise{
 
 // Inner class to speed up gradient computations
 // (array access is a lot slower than member access)
-final class Grad{
+final class Grad
+{
 
 	/** @var float */
 	public $x;
@@ -343,7 +354,8 @@ final class Grad{
 	/** @var float */
 	public $z;
 
-	public function __construct(float $x, float $y, float $z){
+	public function __construct(float $x, float $y, float $z)
+	{
 		$this->x = $x;
 		$this->y = $y;
 		$this->z = $z;

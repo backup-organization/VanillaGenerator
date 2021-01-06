@@ -6,7 +6,8 @@ namespace muqsit\vanillagenerator\generator\noise\bukkit;
 
 use pocketmine\utils\Random;
 
-class SimplexNoiseGenerator extends BasePerlinNoiseGenerator{
+class SimplexNoiseGenerator extends BasePerlinNoiseGenerator
+{
 
 	protected const SQRT_3 = 3 ** 0.5;
 	protected const SQRT_5 = 5 ** 0.5;
@@ -52,7 +53,8 @@ class SimplexNoiseGenerator extends BasePerlinNoiseGenerator{
 	/**
 	 * @return SimplexNoiseGenerator
 	 */
-	public static function getInstance(){
+	public static function getInstance()
+	{
 		return self::$instance ?? self::$instance = new SimplexNoiseGenerator();
 	}
 
@@ -64,11 +66,12 @@ class SimplexNoiseGenerator extends BasePerlinNoiseGenerator{
 	 * @param float $w
 	 * @return float
 	 */
-	protected static function dot(array $g, float $x, float $y, float $z = 0.0, float $w = 0.0) : float{
+	protected static function dot(array $g, float $x, float $y, float $z = 0.0, float $w = 0.0): float
+	{
 		$result = $g[0] * $x + $g[1] * $y;
-		if($z !== 0.0){
+		if ($z !== 0.0) {
 			$result += $g[2] * $z;
-			if($w !== 0.0){
+			if ($w !== 0.0) {
 				$result += $g[3] * $w;
 			}
 		}
@@ -76,9 +79,10 @@ class SimplexNoiseGenerator extends BasePerlinNoiseGenerator{
 		return $result;
 	}
 
-	public function __construct(?Random $rand = null){
+	public function __construct(?Random $rand = null)
+	{
 		parent::__construct($rand);
-		if($rand !== null){
+		if ($rand !== null) {
 			self::$offsetW = $rand->nextFloat() * 256;
 		}
 	}
@@ -92,7 +96,8 @@ class SimplexNoiseGenerator extends BasePerlinNoiseGenerator{
 	 * @param float $zin Z coordinate
 	 * @return float noise at given location, from range -1 to 1
 	 */
-	public static function getNoise3d(float $xin, float $yin = 0.0, float $zin = 0.0) : float{
+	public static function getNoise3d(float $xin, float $yin = 0.0, float $zin = 0.0): float
+	{
 		return self::getInstance()->noise3d($xin, $yin, $zin);
 	}
 
@@ -106,12 +111,14 @@ class SimplexNoiseGenerator extends BasePerlinNoiseGenerator{
 	 * @param float $w W coordinate
 	 * @return float noise at given location, from range -1 to 1
 	 */
-	public static function getNoise(float $x, float $y, float $z, float $w) : float{
+	public static function getNoise(float $x, float $y, float $z, float $w): float
+	{
 		return self::getInstance()->noise($x, $y, $z, $w);
 	}
 
-	public function noise3d(float $xin, float $yin = 0.0, float $zin = 0.0) : float{
-		if($zin === 0.0){
+	public function noise3d(float $xin, float $yin = 0.0, float $zin = 0.0): float
+	{
+		if ($zin === 0.0) {
 			$xin += $this->offsetX;
 			$yin += $this->offsetY;
 
@@ -138,10 +145,10 @@ class SimplexNoiseGenerator extends BasePerlinNoiseGenerator{
 			$i1 = 0;
 			$j1 = 0;
 
-			if($x0 > $y0){ // lower triangle, XY order: (0,0)->(1,0)->(1,1)
+			if ($x0 > $y0) { // lower triangle, XY order: (0,0)->(1,0)->(1,1)
 				$i1 = 1;
 				$j1 = 0;
-			}else{ // upper triangle, YX order: (0,0)->(0,1)->(1,1)
+			} else { // upper triangle, YX order: (0,0)->(0,1)->(1,1)
 				$i1 = 0;
 				$j1 = 1;
 			}
@@ -164,25 +171,25 @@ class SimplexNoiseGenerator extends BasePerlinNoiseGenerator{
 
 			// Calculate the contribution from the three corners
 			$t0 = 0.5 - $x0 * $x0 - $y0 * $y0;
-			if($t0 < 0){
+			if ($t0 < 0) {
 				$n0 = 0.0;
-			}else{
+			} else {
 				$t0 *= $t0;
 				$n0 = $t0 * $t0 * self::dot(self::GRAD3[$gi0], $x0, $y0); // (x,y) of grad3 used for 2D gradient
 			}
 
 			$t1 = 0.5 - $x1 * $x1 - $y1 * $y1;
-			if($t1 < 0){
+			if ($t1 < 0) {
 				$n1 = 0.0;
-			}else{
+			} else {
 				$t1 *= $t1;
 				$n1 = $t1 * $t1 * self::dot(self::GRAD3[$gi1], $x1, $y1);
 			}
 
 			$t2 = 0.5 - $x2 * $x2 - $y2 * $y2;
-			if($t2 < 0){
+			if ($t2 < 0) {
 				$n2 = 0.0;
-			}else{
+			} else {
 				$t2 *= $t2;
 				$n2 = $t2 * $t2 * self::dot(self::GRAD3[$gi2], $x2, $y2);
 			}
@@ -229,22 +236,22 @@ class SimplexNoiseGenerator extends BasePerlinNoiseGenerator{
 		$j2 = 0;
 		$k2 = 0;
 
-		if($x0 >= $y0){
-			if($y0 >= $z0){ // X Y Z order
+		if ($x0 >= $y0) {
+			if ($y0 >= $z0) { // X Y Z order
 				$i1 = 1;
 				$j1 = 0;
 				$k1 = 0;
 				$i2 = 1;
 				$j2 = 1;
 				$k2 = 0;
-			}elseif($x0 >= $z0){ // X Z Y order
+			} elseif ($x0 >= $z0) { // X Z Y order
 				$i1 = 1;
 				$j1 = 0;
 				$k1 = 0;
 				$i2 = 1;
 				$j2 = 0;
 				$k2 = 1;
-			}else{ // Z X Y order
+			} else { // Z X Y order
 				$i1 = 0;
 				$j1 = 0;
 				$k1 = 1;
@@ -252,22 +259,22 @@ class SimplexNoiseGenerator extends BasePerlinNoiseGenerator{
 				$j2 = 0;
 				$k2 = 1;
 			}
-		}else{ // x0<y0
-			if($y0 < $z0){ // Z Y X order
+		} else { // x0<y0
+			if ($y0 < $z0) { // Z Y X order
 				$i1 = 0;
 				$j1 = 0;
 				$k1 = 1;
 				$i2 = 0;
 				$j2 = 1;
 				$k2 = 1;
-			}elseif($x0 < $z0){ // Y Z X order
+			} elseif ($x0 < $z0) { // Y Z X order
 				$i1 = 0;
 				$j1 = 1;
 				$k1 = 0;
 				$i2 = 0;
 				$j2 = 1;
 				$k2 = 1;
-			}else{ // Y X Z order
+			} else { // Y X Z order
 				$i1 = 0;
 				$j1 = 1;
 				$k1 = 0;
@@ -302,33 +309,33 @@ class SimplexNoiseGenerator extends BasePerlinNoiseGenerator{
 
 		// Calculate the contribution from the four corners
 		$t0 = 0.6 - $x0 * $x0 - $y0 * $y0 - $z0 * $z0;
-		if($t0 < 0){
+		if ($t0 < 0) {
 			$n0 = 0.0;
-		}else{
+		} else {
 			$t0 *= $t0;
 			$n0 = $t0 * $t0 * self::dot(self::GRAD3[$gi0], $x0, $y0, $z0);
 		}
 
 		$t1 = 0.6 - $x1 * $x1 - $y1 * $y1 - $z1 * $z1;
-		if($t1 < 0){
+		if ($t1 < 0) {
 			$n1 = 0.0;
-		}else{
+		} else {
 			$t1 *= $t1;
 			$n1 = $t1 * $t1 * self::dot(self::GRAD3[$gi1], $x1, $y1, $z1);
 		}
 
 		$t2 = 0.6 - $x2 * $x2 - $y2 * $y2 - $z2 * $z2;
-		if($t2 < 0){
+		if ($t2 < 0) {
 			$n2 = 0.0;
-		}else{
+		} else {
 			$t2 *= $t2;
 			$n2 = $t2 * $t2 * self::dot(self::GRAD3[$gi2], $x2, $y2, $z2);
 		}
 
 		$t3 = 0.6 - $x3 * $x3 - $y3 * $y3 - $z3 * $z3;
-		if($t3 < 0){
+		if ($t3 < 0) {
 			$n3 = 0.0;
-		}else{
+		} else {
 			$t3 *= $t3;
 			$n3 = $t3 * $t3 * self::dot(self::GRAD3[$gi3], $x3, $y3, $z3);
 		}
@@ -348,7 +355,8 @@ class SimplexNoiseGenerator extends BasePerlinNoiseGenerator{
 	 * @param float $w W coordinate
 	 * @return float noise at given location, from range -1 to 1
 	 */
-	public function noise(float $x, float $y, float $z, float $w) : float{
+	public function noise(float $x, float $y, float $z, float $w): float
+	{
 		$x += $this->offsetX;
 		$y += $this->offsetY;
 		$z += $this->offsetZ;
@@ -471,41 +479,41 @@ class SimplexNoiseGenerator extends BasePerlinNoiseGenerator{
 
 		// Calculate the contribution from the five corners
 		$t0 = 0.6 - $x0 * $x0 - $y0 * $y0 - $z0 * $z0 - $w0 * $w0;
-		if($t0 < 0){
+		if ($t0 < 0) {
 			$n0 = 0.0;
-		}else{
+		} else {
 			$t0 *= $t0;
 			$n0 = $t0 * $t0 * self::dot(self::GRAD4[$gi0], $x0, $y0, $z0, $w0);
 		}
 
 		$t1 = 0.6 - $x1 * $x1 - $y1 * $y1 - $z1 * $z1 - $w1 * $w1;
-		if($t1 < 0){
+		if ($t1 < 0) {
 			$n1 = 0.0;
-		}else{
+		} else {
 			$t1 *= $t1;
 			$n1 = $t1 * $t1 * self::dot(self::GRAD4[$gi1], $x1, $y1, $z1, $w1);
 		}
 
 		$t2 = 0.6 - $x2 * $x2 - $y2 * $y2 - $z2 * $z2 - $w2 * $w2;
-		if($t2 < 0){
+		if ($t2 < 0) {
 			$n2 = 0.0;
-		}else{
+		} else {
 			$t2 *= $t2;
 			$n2 = $t2 * $t2 * self::dot(self::GRAD4[$gi2], $x2, $y2, $z2, $w2);
 		}
 
 		$t3 = 0.6 - $x3 * $x3 - $y3 * $y3 - $z3 * $z3 - $w3 * $w3;
-		if($t3 < 0){
+		if ($t3 < 0) {
 			$n3 = 0.0;
-		}else{
+		} else {
 			$t3 *= $t3;
 			$n3 = $t3 * $t3 * self::dot(self::GRAD4[$gi3], $x3, $y3, $z3, $w3);
 		}
 
 		$t4 = 0.6 - $x4 * $x4 - $y4 * $y4 - $z4 * $z4 - $w4 * $w4;
-		if($t4 < 0){
+		if ($t4 < 0) {
 			$n4 = 0.0;
-		}else{
+		} else {
 			$t4 *= $t4;
 			$n4 = $t4 * $t4 * self::dot(self::GRAD4[$gi4], $x4, $y4, $z4, $w4);
 		}

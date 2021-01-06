@@ -13,7 +13,8 @@ use pocketmine\utils\Random;
 use pocketmine\world\ChunkManager;
 use pocketmine\world\format\Chunk;
 
-class OrePopulator implements Populator{
+class OrePopulator implements Populator
+{
 
 	/** @var OreTypeHolder[] */
 	private $ores = [];
@@ -22,7 +23,8 @@ class OrePopulator implements Populator{
 	 * Creates a populator for dirt, gravel, andesite, diorite, granite; and coal, iron, gold,
 	 * redstone, diamond and lapis lazuli ores.
 	 */
-	public function __construct(){
+	public function __construct()
+	{
 		$this->addOre(new OreType(VanillaBlocks::DIRT(), 0, 256, 32), 10);
 		$this->addOre(new OreType(VanillaBlocks::GRAVEL(), 0, 256, 32), 8);
 		$this->addOre(new OreType(VanillaBlocks::GRANITE(), 0, 80, 32), 10);
@@ -36,16 +38,18 @@ class OrePopulator implements Populator{
 		$this->addOre(new OreType(VanillaBlocks::LAPIS_LAZULI_ORE(), 16, 16, 6), 1);
 	}
 
-	protected function addOre(OreType $type, int $value) : void{
+	protected function addOre(OreType $type, int $value): void
+	{
 		$this->ores[] = new OreTypeHolder($type, $value);
 	}
 
-	public function populate(ChunkManager $world, Random $random, int $chunkX, int $chunkZ, Chunk $chunk) : void{
+	public function populate(ChunkManager $world, Random $random, int $chunkX, int $chunkZ, Chunk $chunk): void
+	{
 		$cx = $chunkX << 4;
 		$cz = $chunkZ << 4;
 
-		foreach($this->ores as $ore_type_holder){
-			for($n = 0; $n < $ore_type_holder->value; ++$n){
+		foreach ($this->ores as $ore_type_holder) {
+			for ($n = 0; $n < $ore_type_holder->value; ++$n) {
 				$sourceX = $cx + $random->nextBoundedInt(16);
 				$sourceZ = $cz + $random->nextBoundedInt(16);
 				$sourceY = $ore_type_holder->type->getRandomHeight($random);

@@ -6,17 +6,19 @@ namespace muqsit\vanillagenerator\generator\noise\bukkit;
 
 use pocketmine\utils\Random;
 
-class SimplexOctaveGenerator extends BaseOctaveGenerator{
+class SimplexOctaveGenerator extends BaseOctaveGenerator
+{
 
 	/**
 	 * @param Random $rand
 	 * @param int $octaves
 	 * @return SimplexNoiseGenerator[]
 	 */
-	private static function createOctaves(Random $rand, int $octaves) : array{
+	private static function createOctaves(Random $rand, int $octaves): array
+	{
 		$result = [];
 
-		for($i = 0; $i < $octaves; ++$i){
+		for ($i = 0; $i < $octaves; ++$i) {
 			$result[$i] = new SimplexNoiseGenerator($rand);
 		}
 
@@ -32,11 +34,13 @@ class SimplexOctaveGenerator extends BaseOctaveGenerator{
 	 * @param Random $rand
 	 * @param int $octaves Amount of octaves to create
 	 */
-	public function __construct(Random $rand, int $octaves){
+	public function __construct(Random $rand, int $octaves)
+	{
 		parent::__construct(self::createOctaves($rand, $octaves));
 	}
 
-	public function setScale(float $scale) : void{
+	public function setScale(float $scale): void
+	{
 		parent::setScale($scale);
 		$this->setWScale($scale);
 	}
@@ -46,7 +50,8 @@ class SimplexOctaveGenerator extends BaseOctaveGenerator{
 	 *
 	 * @return float W scale
 	 */
-	public function getWScale() : float{
+	public function getWScale(): float
+	{
 		return $this->wScale;
 	}
 
@@ -55,7 +60,8 @@ class SimplexOctaveGenerator extends BaseOctaveGenerator{
 	 *
 	 * @param float $scale New W scale
 	 */
-	public function setWScale(float $scale) : void{
+	public function setWScale(float $scale): void
+	{
 		$this->wScale = $scale;
 	}
 
@@ -71,7 +77,8 @@ class SimplexOctaveGenerator extends BaseOctaveGenerator{
 	 * @param bool $normalized If true, normalize the value to [-1, 1]
 	 * @return float resulting noise
 	 */
-	public function octaveNoise(float $x, float $y, float $z, float $frequency, float $amplitude, bool $normalized) : float{
+	public function octaveNoise(float $x, float $y, float $z, float $frequency, float $amplitude, bool $normalized): float
+	{
 		$result = 0.0;
 		$amp = 1.0;
 		$freq = 1.0;
@@ -81,14 +88,14 @@ class SimplexOctaveGenerator extends BaseOctaveGenerator{
 		$y *= $this->yScale;
 		$z *= $this->zScale;
 
-		foreach($this->octaves as $octave){
+		foreach ($this->octaves as $octave) {
 			$result += $octave->noise3d($x * $freq, $y * $freq, $z * $freq) * $amp;
 			$max += $amp;
 			$freq *= $frequency;
 			$amp *= $amplitude;
 		}
 
-		if($normalized){
+		if ($normalized) {
 			$result /= $max;
 		}
 
@@ -108,7 +115,8 @@ class SimplexOctaveGenerator extends BaseOctaveGenerator{
 	 * @param bool $normalized If true, normalize the value to [-1, 1]
 	 * @return float resulting noise
 	 */
-	public function noise(float $x, float $y, float $z, float $w, float $frequency, float $amplitude, bool $normalized = false) : float{
+	public function noise(float $x, float $y, float $z, float $w, float $frequency, float $amplitude, bool $normalized = false): float
+	{
 		$result = 0.0;
 		$amp = 1.0;
 		$freq = 1.0;
@@ -120,14 +128,14 @@ class SimplexOctaveGenerator extends BaseOctaveGenerator{
 		$w *= $this->wScale;
 
 		/** @var SimplexNoiseGenerator $octave */
-		foreach($this->octaves as $octave){
+		foreach ($this->octaves as $octave) {
 			$result += $octave->noise($x * $freq, $y * $freq, $z * $freq, $w * $freq) * $amp;
 			$max += $amp;
 			$freq *= $frequency;
 			$amp *= $amplitude;
 		}
 
-		if($normalized){
+		if ($normalized) {
 			$result /= $max;
 		}
 
