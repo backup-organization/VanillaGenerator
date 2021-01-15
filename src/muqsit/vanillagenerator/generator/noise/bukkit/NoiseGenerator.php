@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace muqsit\vanillagenerator\generator\noise\bukkit;
 
+use FFI;
+
 abstract class NoiseGenerator
 {
 
@@ -21,7 +23,7 @@ abstract class NoiseGenerator
 
 	public static function floor(float $x): int
 	{
-		return $x >= 0 ? (int)$x : (int)$x - 1;
+		return (FFI::cdef("int floor(float x);"))->floor($x);
 	}
 
 	protected static function fade(float $x): float
